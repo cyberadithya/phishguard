@@ -188,5 +188,189 @@
         }
       ]
     }
+  },
+  {
+    "id": "phish-011",
+    "label": "phishing",
+    "description": "BEC wire transfer with reply-to on suspicious TLD",
+    "email": {
+      "senderName": "CFO Sarah Miller",
+      "senderEmail": "sarah.miller@acmecorp.com",
+      "replyTo": "sarah.miller.finance@acme-payments.buzz",
+      "subject": "Confidential wire transfer request",
+      "bodyText": "I need a wire transfer processed today for a vendor acquisition. Keep this between us and reply to confirm.",
+      "links": []
+    }
+  },
+  {
+    "id": "phish-012",
+    "label": "phishing",
+    "description": "LinkedIn spoof with deceptive profile link",
+    "email": {
+      "senderName": "LinkedIn",
+      "senderEmail": "messages@linkedln-security.top",
+      "replyTo": null,
+      "subject": "Someone viewed your profile",
+      "bodyText": "A recruiter viewed your profile. Sign in to see who it was.",
+      "links": [
+        {
+          "displayText": "https://www.linkedin.com/in/profile",
+          "href": "https://linkedln-security.top/login/auth",
+          "hostname": "linkedln-security.top"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-013",
+    "label": "phishing",
+    "description": "Minimal body with single deceptive link",
+    "email": {
+      "senderName": "IT Support",
+      "senderEmail": "helpdesk@company-internal.co",
+      "replyTo": null,
+      "subject": "Shared document",
+      "bodyText": "Please review the attached policy update immediately. Click here to open the document.",
+      "links": [
+        {
+          "displayText": "https://company-internal.co/policy",
+          "href": "https://company-internal-policy.xyz/secure/login",
+          "hostname": "company-internal-policy.xyz"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-014",
+    "label": "phishing",
+    "description": "Amazon typosquat without obvious punycode",
+    "email": {
+      "senderName": "Amazon Customer Service",
+      "senderEmail": "support@amazonn-orders.work",
+      "replyTo": null,
+      "subject": "Order hold — verify shipping address",
+      "bodyText": "We could not verify your shipping address. Confirm your account details to release the order.",
+      "links": [
+        {
+          "displayText": "https://www.amazon.com/verify-address",
+          "href": "https://amazonn-orders.work/account/verify",
+          "hostname": "amazonn-orders.work"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-015",
+    "label": "phishing",
+    "description": "Credential harvesting on suspicious TLD only",
+    "email": {
+      "senderName": "security@company.com",
+      "senderEmail": "admin@corp-portal.gq",
+      "replyTo": null,
+      "subject": "Portal maintenance tonight",
+      "bodyText": "Re-authenticate before the maintenance window begins. Confirm your credentials to avoid lockout.",
+      "links": [
+        {
+          "displayText": "https://portal.company.com/auth",
+          "href": "https://corp-portal.gq/auth/login",
+          "hostname": "corp-portal.gq"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-016",
+    "label": "phishing",
+    "description": "IRS tax refund scam with urgency",
+    "email": {
+      "senderName": "IRS Refund Department",
+      "senderEmail": "refunds@irs-gov-refund.cam",
+      "replyTo": null,
+      "subject": "Immediate action required for your tax refund",
+      "bodyText": "Your refund is pending verification. Confirm your identity immediately to receive payment.",
+      "links": [
+        {
+          "displayText": "https://www.irs.gov/refunds",
+          "href": "https://irs-gov-refund.cam/secure/verify",
+          "hostname": "irs-gov-refund.cam"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-017",
+    "label": "phishing",
+    "description": "Package delivery failure scam",
+    "email": {
+      "senderName": "USPS Delivery",
+      "senderEmail": "delivery@usps-parcel-notice.link",
+      "replyTo": null,
+      "subject": "Delivery attempt failed — action required",
+      "bodyText": "We could not deliver your package. Click below to reschedule immediately.",
+      "links": [
+        {
+          "displayText": "https://tools.usps.com/redelivery",
+          "href": "https://usps-parcel-notice.link/redelivery/login",
+          "hostname": "usps-parcel-notice.link"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-018",
+    "label": "phishing",
+    "description": "Crypto wallet credential harvest",
+    "email": {
+      "senderName": "MetaMask Support",
+      "senderEmail": "support@metamask-wallet-verify.rest",
+      "replyTo": null,
+      "subject": "Unusual wallet activity detected",
+      "bodyText": "We detected unusual activity on your wallet. Verify your recovery phrase immediately.",
+      "links": [
+        {
+          "displayText": "https://metamask.io/secure",
+          "href": "https://metamask-wallet-verify.rest/restore/seed",
+          "hostname": "metamask-wallet-verify.rest"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-019",
+    "label": "phishing",
+    "description": "HR benefits enrollment impersonation",
+    "email": {
+      "senderName": "HR Benefits",
+      "senderEmail": "benefits@hr-enrollment-portal.monster",
+      "replyTo": null,
+      "subject": "Open enrollment ends today",
+      "bodyText": "Your benefits selection is incomplete. Sign in now to avoid losing coverage. Confirm your identity to finalize elections. Act now before open enrollment closes.",
+      "links": [
+        {
+          "displayText": "https://benefits.company.com/enroll",
+          "href": "https://hr-enrollment-portal.monster/login",
+          "hostname": "hr-enrollment-portal.monster"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-020",
+    "label": "phishing",
+    "description": "Display name shows different email than From header",
+    "email": {
+      "senderName": "security@university.edu",
+      "senderEmail": "alerts@mailbox-quota-update.tk",
+      "replyTo": null,
+      "subject": "Mailbox storage warning",
+      "bodyText": "Your mailbox is almost full. Update your account to avoid losing messages.",
+      "links": [
+        {
+          "displayText": "Increase storage",
+          "href": "https://mailbox-quota-update.tk/account/login",
+          "hostname": "mailbox-quota-update.tk"
+        }
+      ]
+    }
   }
 ]

@@ -79,16 +79,19 @@ describe("evaluateCorpus", () => {
   const phishing = loadFixtures("phishing-samples.json");
   const benign = loadFixtures("benign-samples.json");
   const corpus = [...phishing, ...benign].map((s) => ({
+    id: s.id,
     email: s.email,
     label: s.label,
   }));
 
-  it("evaluates full test corpus with strong recall", () => {
+  it("evaluates full test corpus with strong metrics", () => {
     const metrics = evaluateCorpus(corpus);
 
-    expect(metrics.total).toBe(20);
-    expect(metrics.recall).toBeGreaterThanOrEqual(0.8);
-    expect(metrics.accuracy).toBeGreaterThanOrEqual(0.75);
+    expect(metrics.total).toBe(40);
+    expect(metrics.recall).toBeGreaterThanOrEqual(0.9);
+    expect(metrics.precision).toBeGreaterThanOrEqual(0.95);
+    expect(metrics.accuracy).toBeGreaterThanOrEqual(0.9);
+    expect(metrics.f1Score).toBeGreaterThanOrEqual(0.9);
   });
 
   it("classifies all phishing samples above threshold", () => {
@@ -105,5 +108,23 @@ describe("evaluateCorpus", () => {
     }
 
     expect(failures).toEqual([]);
+  });
+
+  it("keeps hard benign samples below threshold", () => {
+    const falsePositives: string[] = [];
+
+    for (const sample of benign) {
+      const result = analyzeEmail({
+        ...sample.email,
+        extractedAt: Date.now(),
+      });
+      if (result.score >= 50) {
+        falsePositives.push(
+          `${sample.id} (score ${result.score}): ${sample.description}`
+        );
+      }
+    }
+
+    expect(falsePositives).toEqual([]);
   });
 });

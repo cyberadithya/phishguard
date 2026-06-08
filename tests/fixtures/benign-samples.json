@@ -176,5 +176,195 @@
       "bodyText": "Attached are notes from today's standup. Next sync is Tuesday at 10 AM.",
       "links": []
     }
+  },
+  {
+    "id": "benign-011",
+    "label": "benign",
+    "description": "Amazon payment update with urgency language (legitimate domain)",
+    "email": {
+      "senderName": "Amazon.com",
+      "senderEmail": "account-update@amazon.com",
+      "replyTo": null,
+      "subject": "Action needed: update your payment method",
+      "bodyText": "We could not charge your default card. Update your payment method to avoid interruption to your Prime benefits.",
+      "links": [
+        {
+          "displayText": "Update payment method",
+          "href": "https://www.amazon.com/gp/wallet/home",
+          "hostname": "www.amazon.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-012",
+    "label": "benign",
+    "description": "Legitimate DocuSign signature request",
+    "email": {
+      "senderName": "DocuSign",
+      "senderEmail": "dse@docusign.net",
+      "replyTo": null,
+      "subject": "Complete with DocuSign: Internship Offer Letter",
+      "bodyText": "A document is waiting for your signature. Review and sign at your earliest convenience.",
+      "links": [
+        {
+          "displayText": "Review Document",
+          "href": "https://docusign.net/Member/EmailStart.aspx?a=example",
+          "hostname": "docusign.net"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-013",
+    "label": "benign",
+    "description": "PayPal transaction alert from official domain",
+    "email": {
+      "senderName": "PayPal",
+      "senderEmail": "service@paypal.com",
+      "replyTo": null,
+      "subject": "You sent a payment",
+      "bodyText": "This is a receipt for your recent payment. Log in to view transaction details.",
+      "links": [
+        {
+          "displayText": "View transaction",
+          "href": "https://www.paypal.com/activity/payment/example",
+          "hostname": "www.paypal.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-014",
+    "label": "benign",
+    "description": "Retail marketing with act-now language",
+    "email": {
+      "senderName": "Nike",
+      "senderEmail": "deals@email.nike.com",
+      "replyTo": null,
+      "subject": "Members-only sale ends tonight — act now",
+      "bodyText": "Click here to shop exclusive markdowns before midnight. Limited sizes available.",
+      "links": [
+        {
+          "displayText": "Shop the sale",
+          "href": "https://www.nike.com/sale",
+          "hostname": "www.nike.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-015",
+    "label": "benign",
+    "description": "Microsoft password expiry notice from official domain",
+    "email": {
+      "senderName": "Microsoft account team",
+      "senderEmail": "account-security-noreply@accountprotection.microsoft.com",
+      "replyTo": null,
+      "subject": "Your Microsoft account password is expiring soon",
+      "bodyText": "Your organization requires a password change. Sign in to update your credentials before the deadline.",
+      "links": [
+        {
+          "displayText": "Sign in to Microsoft",
+          "href": "https://account.microsoft.com/security",
+          "hostname": "account.microsoft.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-016",
+    "label": "benign",
+    "description": "FedEx delivery notification",
+    "email": {
+      "senderName": "FedEx",
+      "senderEmail": "tracking@fedex.com",
+      "replyTo": null,
+      "subject": "Your package is out for delivery",
+      "bodyText": "Your shipment will arrive today. Track your package for real-time delivery updates.",
+      "links": [
+        {
+          "displayText": "Track shipment",
+          "href": "https://www.fedex.com/fedextrack/?trknbr=1234567890",
+          "hostname": "www.fedex.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-017",
+    "label": "benign",
+    "description": "University IT password reset from .edu domain",
+    "email": {
+      "senderName": "University IT Services",
+      "senderEmail": "it-help@university.edu",
+      "replyTo": null,
+      "subject": "Scheduled password reset reminder",
+      "bodyText": "Your campus password expires next week. Visit the IT portal to update your account before access is interrupted.",
+      "links": [
+        {
+          "displayText": "IT password portal",
+          "href": "https://university.edu/it/password-reset",
+          "hostname": "university.edu"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-018",
+    "label": "benign",
+    "description": "Stripe failed payment from official domain",
+    "email": {
+      "senderName": "Stripe",
+      "senderEmail": "receipts@stripe.com",
+      "replyTo": null,
+      "subject": "Payment failed for your subscription",
+      "bodyText": "We were unable to process your latest invoice. Update your payment method to restore service.",
+      "links": [
+        {
+          "displayText": "Update billing",
+          "href": "https://billing.stripe.com/p/login/example",
+          "hostname": "billing.stripe.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-019",
+    "label": "benign",
+    "description": "Slack workspace invitation",
+    "email": {
+      "senderName": "Slack",
+      "senderEmail": "feedback@slack.com",
+      "replyTo": null,
+      "subject": "You have been invited to a Slack workspace",
+      "bodyText": "Join your team's workspace to collaborate on the security internship project.",
+      "links": [
+        {
+          "displayText": "Join workspace",
+          "href": "https://join.slack.com/t/example/shared_invite/example",
+          "hostname": "join.slack.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-020",
+    "label": "benign",
+    "description": "Netflix billing update from official domain",
+    "email": {
+      "senderName": "Netflix",
+      "senderEmail": "info@account.netflix.com",
+      "replyTo": null,
+      "subject": "Please update your payment details",
+      "bodyText": "We had trouble billing your card. Update your payment information to keep watching.",
+      "links": [
+        {
+          "displayText": "Update payment info",
+          "href": "https://www.netflix.com/YourAccountPayment",
+          "hostname": "www.netflix.com"
+        }
+      ]
+    }
   }
 ]

@@ -62,6 +62,6 @@ Mention the labeled test corpus in `tests/fixtures/`.
 
 ## Resume bullet
 
-> Built PhishGuard, a Chrome extension that analyzes Gmail messages locally using 12+ heuristic rules and URL checks, scoring phishing risk with explainable factors (100% recall on a labeled test set of 20 synthetic emails).
+> Built PhishGuard, a Chrome extension that analyzes Gmail messages locally using 12+ heuristic rules and URL checks, scoring phishing risk with explainable factors (100% precision/recall on a 40-email labeled corpus with false-positive stress tests).
 
 Run `npm run evaluate` to verify metrics before updating your resume.

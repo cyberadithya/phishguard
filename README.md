@@ -4,7 +4,7 @@
 
 **PhishGuard** is a Chrome extension that analyzes open Gmail messages for phishing indicators using a local, explainable rule engine. All analysis runs in your browser — no email content is sent to external servers.
 
-> **Resume one-liner:** Built a Chrome extension that analyzes Gmail messages locally using 10+ heuristic rules and URL checks, scoring phishing risk with explainable factors (100% recall on a labeled test set of 20 synthetic emails).
+> **Resume one-liner:** Built a Chrome extension that analyzes Gmail messages locally using 12+ heuristic rules and URL checks, scoring phishing risk with explainable factors (100% precision/recall on a 40-email labeled corpus with false-positive stress tests).
 
 ## Threat model
 
@@ -91,7 +91,7 @@ npm test
 npm run evaluate   # print precision/recall on the test corpus
 ```
 
-The test suite includes 10 synthetic phishing samples and 10 benign samples in `tests/fixtures/`.
+The test suite includes 20 phishing and 20 benign samples in `tests/fixtures/`, including hard benign cases (Amazon payment updates, marketing urgency, university IT notices) to stress-test false positives.
 
 See [DEMO.md](DEMO.md) for a 2-minute portfolio demo script.
 
@@ -103,12 +103,22 @@ On the included labeled test corpus (threshold: score ≥ 50 = phishing):
 
 | Metric | Value |
 |--------|-------|
-| Samples | 20 (10 phishing, 10 benign) |
+| Samples | 40 (20 phishing, 20 benign) |
 | Precision | 100% |
 | Recall | 100% |
+| F1 | 100% |
 | Accuracy | 100% |
 
-*Synthetic samples are designed for rule validation, not real-world production accuracy. See Limitations below.*
+**Confusion matrix**
+
+|  | Predicted phishing | Predicted benign |
+|--|-------------------|------------------|
+| Actual phishing | 20 TP | 0 FN |
+| Actual benign | 0 FP | 20 TN |
+
+See [docs/EVALUATION.md](docs/EVALUATION.md) for scoring methodology, rule weights, and limitations.
+
+*Synthetic samples are designed for rule validation and regression testing, not real-world production accuracy.*
 
 ## Project structure
 

@@ -2,13 +2,18 @@ import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { describe, expect, it } from "vitest";
-import { evaluateCorpus } from "../src/analysis/scorer.js";
+import {
+  evaluateCorpus,
+  formatEvaluationReport,
+} from "../src/analysis/scorer.js";
 import type { EmailData } from "../src/shared/types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface FixtureSample {
+  id: string;
   label: "phishing" | "benign";
+  description: string;
   email: EmailData;
 }
 
@@ -22,19 +27,19 @@ describe("corpus evaluation report", () => {
       ...loadFixtures("phishing-samples.json"),
       ...loadFixtures("benign-samples.json"),
     ].map((s) => ({
+      id: s.id,
       email: { ...s.email, extractedAt: Date.now() },
-      label: s.label as "phishing" | "benign",
+      label: s.label,
     }));
 
     const metrics = evaluateCorpus(corpus);
 
-    console.log("\n--- PhishGuard Corpus Evaluation ---");
-    console.log(`Precision: ${(metrics.precision * 100).toFixed(1)}%`);
-    console.log(`Recall:    ${(metrics.recall * 100).toFixed(1)}%`);
-    console.log(`Accuracy:  ${(metrics.accuracy * 100).toFixed(1)}%`);
-    console.log("------------------------------------\n");
+    console.log(`\n${formatEvaluationReport(metrics)}\n`);
 
+    expect(metrics.total).toBe(40);
+    expect(metrics.precision).toBeGreaterThanOrEqual(0.95);
     expect(metrics.recall).toBeGreaterThanOrEqual(0.9);
-    expect(metrics.accuracy).toBeGreaterThanOrEqual(0.75);
+    expect(metrics.accuracy).toBeGreaterThanOrEqual(0.9);
+    expect(metrics.falsePositives).toBe(0);
   });
 });
