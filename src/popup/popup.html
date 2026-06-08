@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PhishGuard</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">🛡️</div>
+      <div>
+        <h1>PhishGuard</h1>
+        <p class="subtitle">Gmail phishing analyzer</p>
+      </div>
+    </header>
+
+    <main>
+      <section id="status-panel" class="panel hidden">
+        <div id="risk-badge" class="risk-badge">—</div>
+        <div class="score-row">
+          <span>Risk score</span>
+          <strong id="risk-score">—</strong>
+        </div>
+        <p id="email-subject" class="email-subject"></p>
+        <p id="email-sender" class="email-sender"></p>
+      </section>
+
+      <section id="empty-state" class="panel empty">
+        <p>Open an email in Gmail to analyze it.</p>
+        <button id="refresh-btn" type="button">Analyze current email</button>
+      </section>
+
+      <section id="findings-section" class="panel hidden">
+        <h2>Findings</h2>
+        <ul id="findings-list"></ul>
+      </section>
+
+      <section id="guidance-section" class="panel hidden">
+        <h2>What to do</h2>
+        <ul id="guidance-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>All analysis runs locally in your browser. No email content is sent to external servers.</p>
+    </footer>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

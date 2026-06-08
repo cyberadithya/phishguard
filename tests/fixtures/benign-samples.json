@@ -1,0 +1,180 @@
+[
+  {
+    "id": "benign-001",
+    "label": "benign",
+    "description": "Legitimate GitHub notification",
+    "email": {
+      "senderName": "GitHub",
+      "senderEmail": "notifications@github.com",
+      "replyTo": null,
+      "subject": "New pull request on your repository",
+      "bodyText": "A contributor opened a pull request. Review the changes when you have a moment.",
+      "links": [
+        {
+          "displayText": "View pull request",
+          "href": "https://github.com/org/repo/pull/42",
+          "hostname": "github.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-002",
+    "label": "benign",
+    "description": "University course announcement",
+    "email": {
+      "senderName": "CS Department",
+      "senderEmail": "cs-dept@university.edu",
+      "replyTo": null,
+      "subject": "Reminder: project proposal due Friday",
+      "bodyText": "This is a reminder that your project proposal is due this Friday at 11:59 PM.",
+      "links": [
+        {
+          "displayText": "Course portal",
+          "href": "https://university.edu/courses/cs101",
+          "hostname": "university.edu"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-003",
+    "label": "benign",
+    "description": "LinkedIn connection request",
+    "email": {
+      "senderName": "LinkedIn",
+      "senderEmail": "messages-noreply@linkedin.com",
+      "replyTo": null,
+      "subject": "You have a new connection request",
+      "bodyText": "Someone would like to connect with you on LinkedIn.",
+      "links": [
+        {
+          "displayText": "View request",
+          "href": "https://www.linkedin.com/mynetwork",
+          "hostname": "www.linkedin.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-004",
+    "label": "benign",
+    "description": "Personal email from friend",
+    "email": {
+      "senderName": "Alex Johnson",
+      "senderEmail": "alex.johnson@gmail.com",
+      "replyTo": null,
+      "subject": "Coffee this weekend?",
+      "bodyText": "Hey! Are you free Saturday afternoon? Would love to catch up.",
+      "links": []
+    }
+  },
+  {
+    "id": "benign-005",
+    "label": "benign",
+    "description": "Amazon shipping update (legitimate domain)",
+    "email": {
+      "senderName": "Amazon.com",
+      "senderEmail": "shipment-tracking@amazon.com",
+      "replyTo": null,
+      "subject": "Your package has shipped",
+      "bodyText": "Your order is on the way. Track your package for delivery updates.",
+      "links": [
+        {
+          "displayText": "Track package",
+          "href": "https://www.amazon.com/gp/css/shiptrack/view.html",
+          "hostname": "www.amazon.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-006",
+    "label": "benign",
+    "description": "Newsletter with marketing language but legitimate",
+    "email": {
+      "senderName": "Tech Digest",
+      "senderEmail": "newsletter@techdigest.io",
+      "replyTo": "newsletter@techdigest.io",
+      "subject": "This week in cybersecurity news",
+      "bodyText": "Read our latest articles on threat intelligence and incident response trends.",
+      "links": [
+        {
+          "displayText": "Read more",
+          "href": "https://techdigest.io/articles/weekly-roundup",
+          "hostname": "techdigest.io"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-007",
+    "label": "benign",
+    "description": "Google account security (legitimate)",
+    "email": {
+      "senderName": "Google",
+      "senderEmail": "no-reply@accounts.google.com",
+      "replyTo": null,
+      "subject": "Security alert for your Google Account",
+      "bodyText": "A new sign-in on your account was detected. If this was you, no action is needed.",
+      "links": [
+        {
+          "displayText": "Check activity",
+          "href": "https://myaccount.google.com/security",
+          "hostname": "myaccount.google.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-008",
+    "label": "benign",
+    "description": "Job application confirmation",
+    "email": {
+      "senderName": "Acme Corp Recruiting",
+      "senderEmail": "recruiting@acmecorp.com",
+      "replyTo": null,
+      "subject": "We received your application",
+      "bodyText": "Thank you for applying to the Security Analyst internship. We will review your materials and respond within two weeks.",
+      "links": [
+        {
+          "displayText": "Careers page",
+          "href": "https://acmecorp.com/careers",
+          "hostname": "acmecorp.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-009",
+    "label": "benign",
+    "description": "Conference registration receipt",
+    "email": {
+      "senderName": "DEF CON Registration",
+      "senderEmail": "registration@defcon.org",
+      "replyTo": null,
+      "subject": "Your registration confirmation",
+      "bodyText": "Thank you for registering. Your badge pickup details are included below.",
+      "links": [
+        {
+          "displayText": "Event details",
+          "href": "https://defcon.org/html/links/dc-info.html",
+          "hostname": "defcon.org"
+        }
+      ]
+    }
+  },
+  {
+    "id": "benign-010",
+    "label": "benign",
+    "description": "Team standup notes",
+    "email": {
+      "senderName": "Project Manager",
+      "senderEmail": "pm@internal-startup.co",
+      "replyTo": null,
+      "subject": "Sprint 12 standup notes",
+      "bodyText": "Attached are notes from today's standup. Next sync is Tuesday at 10 AM.",
+      "links": []
+    }
+  }
+]

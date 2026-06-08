@@ -1,0 +1,20 @@
+{
+  "name": "phishguard",
+  "version": "1.0.0",
+  "description": "Chrome extension that analyzes Gmail messages for phishing indicators",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "evaluate": "vitest run tests/evaluate-corpus.test.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

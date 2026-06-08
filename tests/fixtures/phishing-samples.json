@@ -1,0 +1,192 @@
+[
+  {
+    "id": "phish-001",
+    "label": "phishing",
+    "description": "PayPal brand spoof with mismatched sender domain",
+    "email": {
+      "senderName": "PayPal Security",
+      "senderEmail": "security-alert@paypa1-secure.com",
+      "replyTo": "billing@paypa1-secure.com",
+      "subject": "URGENT: Verify your account within 24 hours",
+      "bodyText": "We detected unusual activity on your account. Click here immediately to verify your credentials or your account will be suspended.",
+      "links": [
+        {
+          "displayText": "https://www.paypal.com/verify",
+          "href": "https://paypa1-secure.com/login/verify",
+          "hostname": "paypa1-secure.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-002",
+    "label": "phishing",
+    "description": "Microsoft impersonation with deceptive link",
+    "email": {
+      "senderName": "Microsoft Account Team",
+      "senderEmail": "noreply@micros0ft-auth.net",
+      "replyTo": null,
+      "subject": "Action required: confirm your identity",
+      "bodyText": "Your password will expire today. Sign in now to avoid losing access.",
+      "links": [
+        {
+          "displayText": "https://login.microsoftonline.com",
+          "href": "https://micros0ft-auth.net/signin",
+          "hostname": "micros0ft-auth.net"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-003",
+    "label": "phishing",
+    "description": "CEO wire transfer scam with urgency",
+    "email": {
+      "senderName": "John CEO",
+      "senderEmail": "john.ceo@company-corp.com",
+      "replyTo": "payments@external-mail.xyz",
+      "subject": "Wire transfer needed immediately",
+      "bodyText": "I need you to process a wire transfer for a confidential acquisition. Act now and keep this confidential.",
+      "links": [
+        {
+          "displayText": "https://company-corp.com/payments",
+          "href": "https://external-mail.xyz/pay",
+          "hostname": "external-mail.xyz"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-004",
+    "label": "phishing",
+    "description": "IP-based credential harvesting link",
+    "email": {
+      "senderName": "IT Helpdesk",
+      "senderEmail": "helpdesk@random-domain.top",
+      "replyTo": null,
+      "subject": "Mailbox quota exceeded",
+      "bodyText": "Your mailbox is full. Update your account to restore service.",
+      "links": [
+        {
+          "displayText": "https://mail.company.com/restore",
+          "href": "http://185.220.101.42/login",
+          "hostname": "185.220.101.42"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-005",
+    "label": "phishing",
+    "description": "Homograph punycode domain",
+    "email": {
+      "senderName": "Apple Support",
+      "senderEmail": "support@apple.com.fake-site.ru",
+      "replyTo": null,
+      "subject": "Your Apple ID has been locked",
+      "bodyText": "Verify your Apple ID immediately to regain access.",
+      "links": [
+        {
+          "displayText": "https://apple.com",
+          "href": "https://xn--pple-43d.com/signin",
+          "hostname": "xn--pple-43d.com"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-006",
+    "label": "phishing",
+    "description": "Amazon impersonation with gift card request",
+    "email": {
+      "senderName": "Amazon",
+      "senderEmail": "orders@amaz0n-billing.click",
+      "replyTo": null,
+      "subject": "Payment failed — update your payment method",
+      "bodyText": "We could not process your order. Purchase a gift card to verify your account and complete checkout.",
+      "links": [
+        {
+          "displayText": "Update payment",
+          "href": "https://amaz0n-billing.click/account/update",
+          "hostname": "amaz0n-billing.click"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-007",
+    "label": "phishing",
+    "description": "Google security alert spoof",
+    "email": {
+      "senderName": "Google",
+      "senderEmail": "alert@g00gle-security.xyz",
+      "replyTo": "support@g00gle-security.xyz",
+      "subject": "Unusual sign-in attempt detected",
+      "bodyText": "Someone tried to access your account. Click below to secure your account within 24 hours.",
+      "links": [
+        {
+          "displayText": "https://accounts.google.com",
+          "href": "https://g00gle-security.xyz/auth",
+          "hostname": "g00gle-security.xyz"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-008",
+    "label": "phishing",
+    "description": "Netflix billing scare tactic",
+    "email": {
+      "senderName": "Netflix",
+      "senderEmail": "billing@netfl1x-support.rest",
+      "replyTo": null,
+      "subject": "Your subscription has been suspended",
+      "bodyText": "Update your payment information immediately to restore streaming access.",
+      "links": [
+        {
+          "displayText": "https://netflix.com/billing",
+          "href": "https://netfl1x-support.rest/billing/login",
+          "hostname": "netfl1x-support.rest"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-009",
+    "label": "phishing",
+    "description": "Bank account verification scam",
+    "email": {
+      "senderName": "Chase Bank",
+      "senderEmail": "alerts@chase-secure-verify.tk",
+      "replyTo": null,
+      "subject": "Verify your account now",
+      "bodyText": "We noticed unusual activity. Confirm your identity to avoid account suspension.",
+      "links": [
+        {
+          "displayText": "Verify account",
+          "href": "https://chase-secure-verify.tk/login",
+          "hostname": "chase-secure-verify.tk"
+        }
+      ]
+    }
+  },
+  {
+    "id": "phish-010",
+    "label": "phishing",
+    "description": "DocuSign phishing with credential path",
+    "email": {
+      "senderName": "DocuSign",
+      "senderEmail": "documents@docusign-esign.monster",
+      "replyTo": null,
+      "subject": "Document awaiting your signature",
+      "bodyText": "You have a pending document. Click here to review and sign immediately.",
+      "links": [
+        {
+          "displayText": "https://docusign.com/sign",
+          "href": "https://docusign-esign.monster/secure/login",
+          "hostname": "docusign-esign.monster"
+        }
+      ]
+    }
+  }
+]
