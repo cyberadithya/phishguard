@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="620" viewBox="0 0 380 620">
+  <rect width="380" height="620" fill="#0f172a"/>
+  <rect width="380" height="72" fill="#1e293b"/>
+  <line x1="0" y1="72" x2="380" y2="72" stroke="#334155"/>
+  <text x="56" y="36" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="18" font-weight="700">PhishGuard</text>
+  <text x="56" y="54" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">Gmail phishing analyzer</text>
+  <text x="16" y="40" font-size="28">=á</text>
+
+  <rect x="12" y="84" width="356" height="120" rx="10" fill="#1e293b" stroke="#334155"/>
+  <rect x="24" y="100" width="72" height="22" rx="11" fill="#7f1d1d"/>
+  <text x="32" y="115" fill="#fca5a5" font-family="system-ui,sans-serif" font-size="11" font-weight="700">CRITICAL</text>
+  <text x="24" y="142" fill="#cbd5e1" font-family="system-ui,sans-serif" font-size="13">Risk score</text>
+  <text x="308" y="142" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="13" font-weight="700">88/100</text>
+  <text x="24" y="168" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="14" font-weight="600">URGENT: Verify your account within 24 hours</text>
+  <text x="24" y="188" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">PayPal Security &lt;security-alert@paypa1-secure.com&gt;</text>
+
+  <rect x="12" y="214" width="356" height="280" rx="10" fill="#1e293b" stroke="#334155"/>
+  <text x="24" y="236" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11" font-weight="600" letter-spacing="0.05em">FINDINGS</text>
+
+  <rect x="24" y="248" width="332" height="58" rx="8" fill="#0f172a"/>
+  <line x1="24" y1="248" x2="24" y2="306" stroke="#f97316" stroke-width="3"/>
+  <text x="36" y="268" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Sender Mismatch</text>
+  <text x="36" y="286" fill="#cbd5e1" font-family="system-ui,sans-serif" font-size="12">Sender name references "paypal" but domain does not match.</text>
+  <text x="36" y="300" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="10">PayPal Security &lt;security-alert@paypa1-secure.com&gt;</text>
+
+  <rect x="24" y="314" width="332" height="58" rx="8" fill="#0f172a"/>
+  <line x1="24" y1="314" x2="24" y2="372" stroke="#f97316" stroke-width="3"/>
+  <text x="36" y="334" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Link Deception</text>
+  <text x="36" y="352" fill="#cbd5e1" font-family="system-ui,sans-serif" font-size="12">Link displays one URL but points to a different destination.</text>
+  <text x="36" y="366" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="10">Shows "paypal.com/verify" ’ paypa1-secure.com/login</text>
+
+  <rect x="24" y="380" width="332" height="50" rx="8" fill="#0f172a"/>
+  <line x1="24" y1="380" x2="24" y2="430" stroke="#eab308" stroke-width="3"/>
+  <text x="36" y="400" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Urgency Language</text>
+  <text x="36" y="418" fill="#cbd5e1" font-family="system-ui,sans-serif" font-size="12">Pressure language common in phishing: "within 24 hours"</text>
+
+  <rect x="12" y="504" width="356" height="72" rx="10" fill="#1e293b" stroke="#334155"/>
+  <text x="24" y="526" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11" font-weight="600" letter-spacing="0.05em">WHAT TO DO</text>
+  <text x="24" y="548" fill="#cbd5e1" font-family="system-ui,sans-serif" font-size="13">Do not click links. Report to IT and delete after reporting.</text>
+
+  <line x1="0" y1="590" x2="380" y2="590" stroke="#334155"/>
+  <text x="16" y="610" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">All analysis runs locally in your browser.</text>
+</svg>

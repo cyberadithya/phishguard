@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PhishGuard — Critical Risk</title>
+    <link rel="stylesheet" href="../src/popup/popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">🛡️</div>
+      <div>
+        <h1>PhishGuard</h1>
+        <p class="subtitle">Gmail phishing analyzer</p>
+      </div>
+    </header>
+    <main>
+      <section class="panel">
+        <div class="risk-badge critical">critical</div>
+        <div class="score-row">
+          <span>Risk score</span>
+          <strong>88/100</strong>
+        </div>
+        <p class="email-subject">URGENT: Verify your account within 24 hours</p>
+        <p class="email-sender">PayPal Security &lt;security-alert@paypa1-secure.com&gt;</p>
+      </section>
+      <section class="panel">
+        <h2>Findings</h2>
+        <ul>
+          <li class="finding-item high">
+            <div class="finding-rule">Sender Mismatch</div>
+            <div class="finding-message">Sender name references "paypal" but the email domain does not match.</div>
+            <div class="finding-evidence">PayPal Security &lt;security-alert@paypa1-secure.com&gt;</div>
+          </li>
+          <li class="finding-item high">
+            <div class="finding-rule">Link Deception</div>
+            <div class="finding-message">A link displays one URL but points to a different destination.</div>
+            <div class="finding-evidence">Shows "https://www.paypal.com/verify" → https://paypa1-secure.com/login/verify</div>
+          </li>
+          <li class="finding-item medium">
+            <div class="finding-rule">Urgency Language</div>
+            <div class="finding-message">Message uses pressure language common in phishing.</div>
+            <div class="finding-evidence">within 24 hours</div>
+          </li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h2>What to do</h2>
+        <ul id="guidance-list">
+          <li>This message shows multiple high-risk phishing signals. Do not interact with it.</li>
+          <li>Report immediately and delete the message after reporting.</li>
+          <li>Do not click the link. Hover over links to confirm the real destination.</li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <p>All analysis runs locally in your browser. No email content is sent to external servers.</p>
+    </footer>
+  </body>
+</html>

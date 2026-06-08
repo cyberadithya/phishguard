@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PhishGuard — Low Risk</title>
+    <link rel="stylesheet" href="../src/popup/popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">🛡️</div>
+      <div>
+        <h1>PhishGuard</h1>
+        <p class="subtitle">Gmail phishing analyzer</p>
+      </div>
+    </header>
+    <main>
+      <section class="panel">
+        <div class="risk-badge low">low</div>
+        <div class="score-row">
+          <span>Risk score</span>
+          <strong id="risk-score">12/100</strong>
+        </div>
+        <p class="email-subject">New pull request on your repository</p>
+        <p class="email-sender">GitHub &lt;notifications@github.com&gt;</p>
+      </section>
+      <section class="panel">
+        <h2>Findings</h2>
+        <ul>
+          <li class="finding-item low">No phishing indicators detected.</li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h2>What to do</h2>
+        <ul id="guidance-list">
+          <li>No major phishing indicators detected, but stay cautious with unexpected attachments or requests.</li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <p>All analysis runs locally in your browser. No email content is sent to external servers.</p>
+    </footer>
+  </body>
+</html>

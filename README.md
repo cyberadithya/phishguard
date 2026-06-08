@@ -1,5 +1,7 @@
 # PhishGuard
 
+[![CI](https://github.com/cyberadithya/phishguard/actions/workflows/ci.yml/badge.svg)](https://github.com/cyberadithya/phishguard/actions/workflows/ci.yml)
+
 **PhishGuard** is a Chrome extension that analyzes open Gmail messages for phishing indicators using a local, explainable rule engine. All analysis runs in your browser — no email content is sent to external servers.
 
 > **Resume one-liner:** Built a Chrome extension that analyzes Gmail messages locally using 10+ heuristic rules and URL checks, scoring phishing risk with explainable factors (100% recall on a labeled test set of 20 synthetic emails).
@@ -20,6 +22,14 @@
 - **Actionable guidance** — what to do when a message looks suspicious
 - **Privacy-first** — 100% local analysis, no external API calls in the MVP
 - **Badge indicator** — risk score shown on the extension icon while viewing Gmail
+
+## Screenshots
+
+| Low risk (benign email) | Critical risk (phishing indicators) |
+|-------------------------|---------------------------------------|
+| ![Low risk analysis](docs/images/popup-low-risk.svg) | ![High risk analysis](docs/images/popup-high-risk.svg) |
+
+To capture live PNG screenshots from the actual popup UI, open [`docs/screenshots.html`](docs/screenshots.html) in Chrome.
 
 ## Architecture
 
@@ -84,6 +94,8 @@ npm run evaluate   # print precision/recall on the test corpus
 The test suite includes 10 synthetic phishing samples and 10 benign samples in `tests/fixtures/`.
 
 See [DEMO.md](DEMO.md) for a 2-minute portfolio demo script.
+
+For Chrome Web Store publishing steps, see [docs/CHROME_WEB_STORE.md](docs/CHROME_WEB_STORE.md).
 
 ## Evaluation results
 

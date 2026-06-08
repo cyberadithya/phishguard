@@ -5,8 +5,8 @@ Use this guide for portfolio demos, interviews, or class presentations.
 ## Setup (2 minutes)
 
 ```bash
-git clone <your-repo-url>
-cd cysecproject
+git clone https://github.com/cyberadithya/phishguard.git
+cd phishguard
 npm install
 npm run build
 ```
