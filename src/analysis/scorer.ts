@@ -1,4 +1,5 @@
 import type { AnalysisResult, EmailData, RiskLevel } from "../shared/types.js";
+import { PHISHING_THRESHOLD } from "../shared/settings.js";
 import { buildGuidance } from "./guidance.js";
 import { runAllRules } from "./rules.js";
 
@@ -11,8 +12,16 @@ function scoreToRiskLevel(score: number): RiskLevel {
   return "low";
 }
 
-export function analyzeEmail(email: EmailData): AnalysisResult {
-  const findings = runAllRules(email);
+export interface AnalyzeOptions {
+  disabledRuleIds?: string[];
+}
+
+export function analyzeEmail(
+  email: EmailData,
+  options: AnalyzeOptions = {}
+): AnalysisResult {
+  const disabled = new Set(options.disabledRuleIds ?? []);
+  const findings = runAllRules(email).filter((finding) => !disabled.has(finding.id));
   const rawScore = findings.reduce((sum, f) => sum + f.weight, 0);
   const score = Math.min(MAX_SCORE, rawScore);
   const riskLevel = scoreToRiskLevel(score);
@@ -26,7 +35,7 @@ export function analyzeEmail(email: EmailData): AnalysisResult {
   };
 }
 
-export const PHISHING_THRESHOLD = 50;
+export { PHISHING_THRESHOLD };
 
 export interface CorpusSampleResult {
   id?: string;

@@ -40,10 +40,21 @@
         <h2>What to do</h2>
         <ul id="guidance-list"></ul>
       </section>
+
+      <section id="export-section" class="panel hidden">
+        <h2>Export for IT</h2>
+        <p class="export-hint">Share a local report with your security team. Redact sensitive details first.</p>
+        <div class="button-row">
+          <button id="copy-markdown-btn" type="button" class="secondary">Copy Markdown</button>
+          <button id="download-json-btn" type="button" class="secondary">Download JSON</button>
+        </div>
+        <p id="export-status" class="export-status" aria-live="polite"></p>
+      </section>
     </main>
 
     <footer>
       <p>All analysis runs locally in your browser. No email content is sent to external servers.</p>
+      <a id="settings-link" href="#">Settings</a>
     </footer>
 
     <script src="popup.js" type="module"></script>

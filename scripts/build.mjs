@@ -12,6 +12,7 @@ const entries = [
   { in: "src/content/gmail.ts", out: "content/gmail.js" },
   { in: "src/background/service-worker.ts", out: "background/service-worker.js" },
   { in: "src/popup/popup.ts", out: "popup/popup.js" },
+  { in: "src/options/options.ts", out: "options/options.js" },
 ];
 
 function ensureDir(path) {
@@ -20,11 +21,14 @@ function ensureDir(path) {
 
 function copyStaticAssets() {
   ensureDir(join(dist, "popup"));
+  ensureDir(join(dist, "options"));
   ensureDir(join(dist, "icons"));
 
   copyFileSync(join(root, "src/manifest.json"), join(dist, "manifest.json"));
   copyFileSync(join(root, "src/popup/popup.html"), join(dist, "popup/popup.html"));
   copyFileSync(join(root, "src/popup/popup.css"), join(dist, "popup/popup.css"));
+  copyFileSync(join(root, "src/options/options.html"), join(dist, "options/options.html"));
+  copyFileSync(join(root, "src/options/options.css"), join(dist, "options/options.css"));
 
   for (const size of [16, 48, 128]) {
     const src = join(root, "icons", `icon${size}.png`);

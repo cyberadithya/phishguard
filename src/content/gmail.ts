@@ -1,10 +1,21 @@
 import { analyzeEmail } from "../analysis/scorer.js";
 import type { EmailData, EmailLink } from "../shared/types.js";
 import { MESSAGE_TYPES } from "../shared/messaging.js";
+import { loadSettings, type UserSettings } from "../shared/settings.js";
 import { GMAIL_SELECTORS, queryWithFallbacks } from "./gmail-selectors.js";
 import { parseHostname } from "../analysis/link-parser.js";
+import { clearWarningBanner, updateWarningBanner } from "./gmail-banner.js";
 
 let lastEmailKey: string | null = null;
+let cachedSettings: UserSettings | null = null;
+const dismissedBannerKeys = new Set<string>();
+
+async function getSettings(): Promise<UserSettings> {
+  if (!cachedSettings) {
+    cachedSettings = await loadSettings();
+  }
+  return cachedSettings;
+}
 
 function extractSenderInfo(root: ParentNode): {
   senderName: string;
@@ -101,8 +112,13 @@ function buildEmailKey(email: EmailData): string {
   return `${email.senderEmail}|${email.subject}|${email.bodyText.slice(0, 120)}`;
 }
 
-function notifyAnalysis(emailKey: string, email: EmailData): void {
-  const result = analyzeEmail(email);
+async function notifyAnalysis(emailKey: string, email: EmailData): Promise<void> {
+  const settings = await getSettings();
+  const result = analyzeEmail(email, {
+    disabledRuleIds: settings.disabledRuleIds,
+  });
+
+  updateWarningBanner(emailKey, result, settings, dismissedBannerKeys);
 
   chrome.runtime.sendMessage({
     type: MESSAGE_TYPES.EMAIL_UPDATED,
@@ -116,21 +132,24 @@ function notifyAnalysis(emailKey: string, email: EmailData): void {
   });
 }
 
-function scanCurrentEmail(): void {
+async function scanCurrentEmail(force = false): Promise<void> {
   const email = extractEmailData();
-  if (!email) return;
+  if (!email) {
+    clearWarningBanner();
+    return;
+  }
 
   const emailKey = buildEmailKey(email);
-  if (emailKey === lastEmailKey) return;
+  if (!force && emailKey === lastEmailKey) return;
 
   lastEmailKey = emailKey;
-  notifyAnalysis(emailKey, email);
+  await notifyAnalysis(emailKey, email);
 }
 
 function setupObserver(): void {
   const target = document.body;
   const observer = new MutationObserver(() => {
-    scanCurrentEmail();
+    void scanCurrentEmail();
   });
 
   observer.observe(target, {
@@ -138,8 +157,16 @@ function setupObserver(): void {
     subtree: true,
   });
 
-  scanCurrentEmail();
+  void scanCurrentEmail();
 }
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== "local" || !changes.userSettings) return;
+
+  cachedSettings = null;
+  lastEmailKey = null;
+  void scanCurrentEmail(true);
+});
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === MESSAGE_TYPES.GET_CURRENT_EMAIL) {
@@ -150,13 +177,21 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === MESSAGE_TYPES.ANALYZE_EMAIL && message.email) {
-    const emailKey = message.emailKey ?? buildEmailKey(message.email);
-    const result = analyzeEmail(message.email);
-    chrome.storage.local.set({
-      lastAnalysis: { emailKey, result },
-      lastEmail: message.email,
-    });
-    sendResponse({ result, emailKey });
+    void (async () => {
+      const settings = await getSettings();
+      const emailKey = message.emailKey ?? buildEmailKey(message.email);
+      const result = analyzeEmail(message.email, {
+        disabledRuleIds: settings.disabledRuleIds,
+      });
+
+      updateWarningBanner(emailKey, result, settings, dismissedBannerKeys);
+
+      chrome.storage.local.set({
+        lastAnalysis: { emailKey, result },
+        lastEmail: message.email,
+      });
+      sendResponse({ result, emailKey });
+    })();
     return true;
   }
 

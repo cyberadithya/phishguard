@@ -40,11 +40,19 @@ Click PhishGuard and highlight:
 - **Urgency Language** finding
 - Actionable **What to do** guidance
 
-### 3. Explain the architecture (30 seconds)
+### 3. Show the in-page banner (optional)
 
-> "The content script reads the open Gmail message from the DOM. A local rule engine scores 12+ heuristics — sender spoofing, deceptive links, punycode domains, urgency language. Nothing leaves the browser."
+If the phishing sample scores above your threshold, PhishGuard shows a warning banner at the top of Gmail with the risk level and top findings. Mention that users can dismiss it per email or tune sensitivity in Settings.
 
-### 4. Show automated tests (optional)
+### 4. Export a report (optional)
+
+In the popup, click **Copy Markdown** or **Download JSON** to show how a user could share a local report with campus IT.
+
+### 5. Explain the architecture (30 seconds)
+
+> "The content script reads the open Gmail message from the DOM. A local rule engine scores 12+ heuristics — sender spoofing, deceptive links, punycode domains, urgency language. Nothing leaves the browser. Users can tune the threshold and toggle rules in Settings."
+
+### 6. Show automated tests (optional)
 
 ```bash
 npm test
@@ -57,7 +65,8 @@ Mention the labeled test corpus in `tests/fixtures/`.
 
 - **Threat model:** User-facing phishing in Gmail; local analysis preserves privacy
 - **Tradeoffs:** Heuristics are explainable but can false-positive on marketing email
-- **Next steps:** VirusTotal API integration, Outlook support, user-adjustable threshold
+- **Next steps:** VirusTotal API integration, Outlook support
+- **Phase 3 features:** In-page banner, IT export reports, configurable settings
 - **Ethics:** Synthetic test data only; report real phishing through official channels
 
 ## Resume bullet

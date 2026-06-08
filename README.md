@@ -22,6 +22,9 @@
 - **Actionable guidance** — what to do when a message looks suspicious
 - **Privacy-first** — 100% local analysis, no external API calls in the MVP
 - **Badge indicator** — risk score shown on the extension icon while viewing Gmail
+- **In-page warning banner** — high-risk alerts displayed directly in Gmail
+- **IT export report** — copy Markdown or download JSON for security teams
+- **Configurable settings** — adjustable threshold, per-rule toggles, banner on/off
 
 ## Screenshots
 
@@ -151,12 +154,20 @@ tests/
 
 See [SECURITY.md](SECURITY.md) for privacy details.
 
+## Settings
+
+Open **Extension options** (right-click the PhishGuard icon → Options) or use the **Settings** link in the popup to:
+
+- Adjust the phishing alert threshold (25–75)
+- Toggle the in-page Gmail warning banner
+- Enable or disable individual detection rules
+
 ## Roadmap
 
 - [ ] Outlook Web App support
 - [ ] Optional VirusTotal / Google Safe Browsing URL checks
-- [ ] User-configurable sensitivity threshold
-- [ ] Export analysis report for IT submission
+- [x] User-configurable sensitivity threshold
+- [x] Export analysis report for IT submission
 
 ## License
 

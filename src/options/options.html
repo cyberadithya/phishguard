@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PhishGuard Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">🛡️</div>
+      <div>
+        <h1>PhishGuard Settings</h1>
+        <p class="subtitle">Tune sensitivity and detection rules</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Sensitivity</h2>
+        <label for="threshold-slider">
+          Phishing alert threshold:
+          <strong id="threshold-value">50</strong>/100
+        </label>
+        <input
+          id="threshold-slider"
+          type="range"
+          min="25"
+          max="75"
+          step="5"
+          value="50"
+        />
+        <p class="hint">
+          Messages scoring at or above this value trigger high-risk alerts and the in-page banner.
+        </p>
+
+        <label class="checkbox-row">
+          <input id="show-banner" type="checkbox" checked />
+          Show in-page warning banner in Gmail
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>Detection rules</h2>
+        <p class="hint">Disable rules that are too noisy for your mailbox.</p>
+        <div id="rules-list" class="rules-list"></div>
+      </section>
+
+      <div class="actions">
+        <button id="save-btn" type="button">Save settings</button>
+        <button id="reset-btn" type="button" class="secondary">Reset defaults</button>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </main>
+  </body>
+  <script src="options.js" type="module"></script>
+</html>
