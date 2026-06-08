@@ -63,7 +63,7 @@ Mention the labeled test corpus in `tests/fixtures/`.
 
 ## Talking points for interviews
 
-- **Threat model:** User-facing phishing in Gmail; local analysis preserves privacy
+- **Threat model:** User-facing phishing in Gmail; local analysis preserves privacy ([STRIDE doc](docs/THREAT_MODEL.md))
 - **Tradeoffs:** Heuristics are explainable but can false-positive on marketing email
 - **Next steps:** VirusTotal API integration, Outlook support
 - **Phase 3 features:** In-page banner, IT export reports, configurable settings

@@ -36,6 +36,10 @@ PhishGuard does **not** request broad access to all websites or `tabs` permissio
 - Browsing history outside Gmail
 - Attachments or attachment contents
 
+## Threat modeling
+
+For a STRIDE-based analysis of PhishGuard's extension architecture, trust boundaries, and residual risks, see [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+
 ## Responsible disclosure
 
 If you discover a security vulnerability in PhishGuard itself, please report it responsibly. Do not publish exploit details before a fix is available.

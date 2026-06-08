@@ -15,6 +15,8 @@
 | **Trust boundary** | Email content is read from the Gmail DOM only when the user has the message open |
 | **Out of scope** | Attachment malware analysis, server-side ML, non-Gmail clients (Outlook support planned) |
 
+Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+
 ## Features
 
 - **12 heuristic detection rules** — sender mismatch, reply-to divergence, link deception, punycode domains, suspicious TLDs, urgency language, and more
