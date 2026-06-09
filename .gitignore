@@ -3,3 +3,5 @@ dist/
 *.log
 .DS_Store
 docs/CHROME_WEB_STORE.md
+DEMO.md
+PRIVATE_ADVICE.md

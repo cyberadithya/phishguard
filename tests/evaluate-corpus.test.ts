@@ -22,7 +22,7 @@ function loadFixtures(filename: string): FixtureSample[] {
 }
 
 describe("corpus evaluation report", () => {
-  it("prints evaluation metrics for portfolio documentation", () => {
+  it("prints evaluation metrics report", () => {
     const corpus = [
       ...loadFixtures("phishing-samples.json"),
       ...loadFixtures("benign-samples.json"),

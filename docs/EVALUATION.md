@@ -89,17 +89,13 @@ Tradeoff: a single high-weight false positive can push a benign email into the p
 
 Reproduce locally with `npm run evaluate`.
 
-## Limitations (read before citing metrics on a resume)
+## Limitations
 
 1. **Synthetic data** — samples are hand-authored to exercise specific rules. Real-world phishing evolves faster than any static corpus.
 2. **No header analysis** — SPF/DKIM/DMARC results are not parsed in the MVP; analysis is body/sender/link heuristics from the Gmail DOM.
 3. **English-only keywords** — urgency rules target English templates.
 4. **Gmail DOM dependency** — extraction can break if Google changes the UI.
 5. **100% on this corpus ≠ 100% in production** — treat metrics as regression tests for the rule engine, not a field trial.
-
-### Honest resume framing
-
-> Built a labeled 40-email evaluation corpus (including false-positive stress tests) and achieved 100% precision/recall on synthetic samples; documented limitations for real-world deployment.
 
 ## Regression testing
 

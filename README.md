@@ -96,10 +96,6 @@ npm run evaluate   # print precision/recall on the test corpus
 
 The test suite includes 20 phishing and 20 benign samples in `tests/fixtures/`, including hard benign cases (Amazon payment updates, marketing urgency, university IT notices) to stress-test false positives.
 
-See [DEMO.md](DEMO.md) for a 2-minute portfolio demo script.
-
-For Chrome Web Store publishing steps, see [docs/CHROME_WEB_STORE.md](docs/CHROME_WEB_STORE.md).
-
 ## Evaluation results
 
 On the included labeled test corpus (threshold: score ≥ 50 = phishing):
