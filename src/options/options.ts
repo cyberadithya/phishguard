@@ -6,11 +6,15 @@ import {
   saveSettings,
   type UserSettings,
 } from "../shared/settings.js";
+import { SAFE_BROWSING_ORIGIN } from "../analysis/url-intel.js";
 
 const thresholdSlider = document.getElementById("threshold-slider") as HTMLInputElement;
 const thresholdValue = document.getElementById("threshold-value")!;
 const showBannerCheckbox = document.getElementById("show-banner") as HTMLInputElement;
 const rulesList = document.getElementById("rules-list")!;
+const enableUrlIntelCheckbox = document.getElementById("enable-url-intel") as HTMLInputElement;
+const safeBrowsingKeyInput = document.getElementById("safe-browsing-key") as HTMLInputElement;
+const urlIntelStatusEl = document.getElementById("url-intel-status")!;
 const saveBtn = document.getElementById("save-btn")!;
 const resetBtn = document.getElementById("reset-btn")!;
 const statusEl = document.getElementById("status")!;
@@ -57,6 +61,8 @@ function readFormSettings(): UserSettings {
     phishingThreshold: Number(thresholdSlider.value),
     showInPageBanner: showBannerCheckbox.checked,
     disabledRuleIds,
+    enableUrlIntel: enableUrlIntelCheckbox.checked,
+    safeBrowsingApiKey: safeBrowsingKeyInput.value,
   });
 }
 
@@ -65,25 +71,86 @@ function applySettingsToForm(settings: UserSettings): void {
   thresholdValue.textContent = String(settings.phishingThreshold);
   showBannerCheckbox.checked = settings.showInPageBanner;
   renderRuleToggles(settings.disabledRuleIds);
+  enableUrlIntelCheckbox.checked = settings.enableUrlIntel;
+  safeBrowsingKeyInput.value = settings.safeBrowsingApiKey;
 }
 
 function setStatus(message: string): void {
   statusEl.textContent = message;
 }
 
+function setUrlIntelStatus(message: string, warn = false): void {
+  urlIntelStatusEl.textContent = message;
+  urlIntelStatusEl.classList.toggle("warn", warn);
+}
+
 thresholdSlider.addEventListener("input", () => {
   thresholdValue.textContent = thresholdSlider.value;
+});
+
+// Requesting the Safe Browsing host permission needs a user gesture, so it
+// happens right on the checkbox click rather than deferred to Save. If the
+// user declines, the checkbox reverts and the setting is never persisted as
+// enabled without the permission actually being granted.
+enableUrlIntelCheckbox.addEventListener("change", () => {
+  if (!enableUrlIntelCheckbox.checked) {
+    setUrlIntelStatus("");
+    return;
+  }
+
+  if (!safeBrowsingKeyInput.value.trim()) {
+    enableUrlIntelCheckbox.checked = false;
+    setUrlIntelStatus("Add a Safe Browsing API key first.", true);
+    return;
+  }
+
+  void (async () => {
+    try {
+      const granted = await chrome.permissions.request({
+        origins: [SAFE_BROWSING_ORIGIN],
+      });
+
+      if (!granted) {
+        enableUrlIntelCheckbox.checked = false;
+        setUrlIntelStatus("Permission denied — Safe Browsing checks were not enabled.", true);
+        return;
+      }
+
+      setUrlIntelStatus('Permission granted. Click "Save settings" to apply.');
+    } catch {
+      enableUrlIntelCheckbox.checked = false;
+      setUrlIntelStatus("Could not request permission.", true);
+    }
+  })();
 });
 
 saveBtn.addEventListener("click", async () => {
   const settings = readFormSettings();
   await saveSettings(settings);
+
+  // Hygiene: drop the host permission once it's no longer needed, rather
+  // than holding an unused grant. Best-effort — a failure here doesn't block
+  // saving the rest of the settings.
+  if (!settings.enableUrlIntel) {
+    try {
+      await chrome.permissions.remove({ origins: [SAFE_BROWSING_ORIGIN] });
+    } catch {
+      // Ignore — nothing to revoke, or the browser declined the removal.
+    }
+  }
+
+  applySettingsToForm(settings);
   setStatus("Settings saved. Reopen Gmail messages to apply changes.");
 });
 
 resetBtn.addEventListener("click", async () => {
   applySettingsToForm(DEFAULT_SETTINGS);
   await saveSettings(DEFAULT_SETTINGS);
+  try {
+    await chrome.permissions.remove({ origins: [SAFE_BROWSING_ORIGIN] });
+  } catch {
+    // Ignore.
+  }
   setStatus("Settings reset to defaults.");
 });
 

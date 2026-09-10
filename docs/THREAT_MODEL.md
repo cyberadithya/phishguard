@@ -12,7 +12,7 @@ This document applies the [STRIDE](https://learn.microsoft.com/en-us/azure/secur
 | Rule engine | Local heuristic analysis and scoring |
 | Popup UI | Displays findings, guidance, export actions |
 | Options page | Threshold, banner toggle, per-rule settings |
-| Background worker | Extension badge updates |
+| Background worker | Extension badge updates; performs the opt-in Safe Browsing URL lookup (only component that makes network requests) |
 | `chrome.storage.local` | Cached analysis, settings, last email metadata |
 | Exported reports | Markdown (clipboard) and JSON (download) |
 
@@ -22,7 +22,7 @@ This document applies the [STRIDE](https://learn.microsoft.com/en-us/azure/secur
 - Phishing attacks against users who do **not** have PhishGuard installed
 - Attachment malware analysis
 - Email authentication headers (SPF/DKIM/DMARC) not exposed in the Gmail DOM
-- Threat intelligence APIs (planned; not in current MVP)
+- VirusTotal / other threat intelligence APIs beyond the implemented, opt-in Google Safe Browsing check
 - Chrome Web Store distribution pipeline (covered at a high level only)
 
 ### Assumptions
@@ -76,7 +76,7 @@ flowchart TB
 | Gmail DOM → Content script | Untrusted email content → extension | Subject, sender, body text, link URLs |
 | Extension → User | Analysis results, exports | Scores, findings, reports |
 | Extension → Local storage | Persistence | Settings, last analysis cache |
-| Extension → Network | **None in MVP** | No outbound requests |
+| Extension → Network | **Opt-in only** | Link URLs only, sent to `safebrowsing.googleapis.com`, never sender/subject/body — see §4.4 (I1) |
 
 ---
 
@@ -122,7 +122,7 @@ flowchart TB
 
 | Threat | Description | Mitigation | Residual risk |
 |--------|-------------|------------|---------------|
-| **I1 — Email content leaked to external servers** | Extension exfiltrates mailbox data. | **No network calls in MVP**; analysis runs in-browser. Permissions limited to `mail.google.com`. | Future Safe Browsing/VirusTotal integration would send **URLs only** (must be opt-in and documented). |
+| **I1 — Email content leaked to external servers** | Extension exfiltrates mailbox data. | Local rule engine runs entirely in-browser and never calls out. The optional Google Safe Browsing check is **off by default**, requires the user's own API key, requests the `safebrowsing.googleapis.com` host permission only when enabled (`optional_host_permissions`, requested via `chrome.permissions.request`), and sends **link URLs only** — never sender, subject, or body text. | A user who enables the feature is trusting their chosen URLs and API key to Google; the request itself (URL + timing) is still information disclosed to a third party even though message content is not. VirusTotal integration remains unimplemented. |
 | **I2 — Sensitive data in clipboard/export** | User copies Markdown report containing PII; file saved to shared machine. | Export footer reminds user to redact; IT export is explicit user action. | User may share unredacted reports; clipboard visible to other apps on OS. |
 | **I3 — Cached email in local storage** | `lastEmail` / `lastAnalysis` persist on disk. | Data stays in extension-local storage; cleared on extension uninstall. | Forensic access to Chrome profile retrieves cache; shared computers increase exposure. |
 | **I4 — Over-broad extension permissions** | Extension reads all sites or all tabs. | Manifest requests `storage`, `activeTab`, and `mail.google.com` host permission only. | `activeTab` still allows popup to message the active Gmail tab when user opens extension. |
@@ -142,7 +142,7 @@ flowchart TB
 | Threat | Description | Mitigation | Residual risk |
 |--------|-------------|------------|---------------|
 | **E1 — Content script escapes to page origin** | Script gains access to Gmail cookies or session. | Content script isolated world; no `eval` of email HTML; MV3 CSP defaults. | Chrome extension vulnerability class; keep dependencies minimal and updated. |
-| **E2 — Malicious email executes in extension context** | Crafted DOM triggers code execution in content script. | No `innerHTML` with email content in extension code; text extraction via `textContent` / attributes. | Future UI changes must avoid injecting unsanitized email HTML into extension pages. |
+| **E2 — Malicious email executes in extension context** | Crafted DOM triggers code execution in content script or extension pages. | No `innerHTML` with email content anywhere in extension code; text extraction via `textContent` / attributes. The popup's finding list (which renders rule/message/evidence strings that can contain email-derived substrings, e.g. a URL) is built with `textContent`, not `innerHTML`. | Future UI changes must keep avoiding `innerHTML` for anything derived from email content or network responses (including Safe Browsing matches). |
 | **E3 — User misled into disabling protections** | Social engineering convinces user to lower threshold or disable all rules. | Settings require deliberate opt-in; defaults remain conservative (threshold 50). | User can always set threshold to 75 or disable critical rules. |
 | **E4 — PhishGuard used as harassment tool** | User exports reports to falsely accuse legitimate senders. | Ethical guidelines in SECURITY.md; reports are heuristic, not legal evidence. | Tool misuse is out of scope for technical controls. |
 
@@ -157,7 +157,7 @@ flowchart TB
 | In-page banner | S2, D3 | Shadow DOM, user dismiss, threshold gating |
 | Popup / export | I2, I5, R1 | Explicit export, redaction reminder |
 | Options page | T2, E3 | Normalized settings, local storage only |
-| Background worker | I1 | Badge only; no email content handling |
+| Background worker | I1 | Badge updates; sole owner of the opt-in Safe Browsing fetch (URL-only, gated on user opt-in + API key) |
 
 ---
 
@@ -168,18 +168,19 @@ flowchart TB
 | `storage` | I3, T2 | Cache analysis and settings locally |
 | `activeTab` | I4 | Message active Gmail tab when user opens popup |
 | `https://mail.google.com/*` | I1, E1 | Inject content script only on Gmail |
+| `https://safebrowsing.googleapis.com/*` (optional) | I1 | Requested only when the user enables Safe Browsing URL checks in Settings; can be revoked by disabling the feature (the options page calls `chrome.permissions.remove` on save) |
 
-**Not requested (deliberately):** `<all_urls>`, `tabs`, `webRequest`, `clipboardRead` — reduces disclosure and tampering surface.
+**Not requested (deliberately):** `<all_urls>`, `tabs`, `webRequest`, `clipboardRead` — reduces disclosure and tampering surface. The Safe Browsing origin is requested as an `optional_host_permissions` entry rather than a static one, so a default install carries no extra network-facing permission.
 
 ---
 
 ## 7. Planned features — threat preview
 
-If roadmap items are implemented, revisit this model:
+**Google Safe Browsing is now implemented** (opt-in, URL-only, user-supplied API key — see the updated I1 row in §4.4 and the permission row in §6). VirusTotal integration and the other roadmap items below remain unimplemented; revisit this model again when they land:
 
 | Feature | New threats | Required controls |
 |---------|-------------|-------------------|
-| Google Safe Browsing / VirusTotal | I1 (URL sent externally), I5 | Opt-in only, URL-only submission, API key in storage not in repo, privacy policy update |
+| VirusTotal URL enrichment | I1 (URL sent externally), I5 | Same pattern as Safe Browsing: opt-in only, URL-only submission, API key in storage not in repo |
 | Outlook Web App | T1, D1 (new DOM), I4 (new host permission) | Separate content script, minimal host scope |
 | Enterprise policy | T2, R2 | Optional managed storage, signed config |
 
@@ -209,7 +210,7 @@ Accepted residual risks for the MVP:
 |---------|--------------|
 | Rule coverage | `tests/rules.test.ts`, 40-sample corpus |
 | False-positive stress | `benign-011` – `benign-020` fixtures |
-| No external calls | Code review; no `fetch` in `src/` (MVP) |
+| No unsolicited external calls | Code review; the only `fetch` in `src/` is the opt-in Safe Browsing lookup in `background/service-worker.ts`, gated on `settings.enableUrlIntel` and a user-supplied key |
 | Permission minimization | `manifest.json` audit |
 
 ---
@@ -223,4 +224,4 @@ Accepted residual risks for the MVP:
 
 ---
 
-*Last updated for PhishGuard v1.0.0 (MV3, Gmail-only, local analysis MVP).*
+*Last updated for PhishGuard v1.0.0 (MV3, Gmail-only, local-first analysis with an opt-in Safe Browsing URL check).*

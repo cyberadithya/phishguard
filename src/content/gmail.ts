@@ -1,14 +1,16 @@
 import { analyzeEmail } from "../analysis/scorer.js";
-import type { EmailData, EmailLink } from "../shared/types.js";
+import { augmentResultWithUrlIntel, selectUrlsForIntelCheck } from "../analysis/url-intel.js";
+import type { AnalysisResult, EmailData, EmailLink, UrlIntelMatch } from "../shared/types.js";
 import { MESSAGE_TYPES } from "../shared/messaging.js";
+import type { CheckUrlsResponse } from "../shared/messaging.js";
 import { loadSettings, type UserSettings } from "../shared/settings.js";
 import { GMAIL_SELECTORS, queryWithFallbacks } from "./gmail-selectors.js";
 import { parseHostname } from "../analysis/link-parser.js";
-import { clearWarningBanner, updateWarningBanner } from "./gmail-banner.js";
+import { clearWarningBanner, loadDismissedBannerKeys, updateWarningBanner } from "./gmail-banner.js";
 
 let lastEmailKey: string | null = null;
 let cachedSettings: UserSettings | null = null;
-const dismissedBannerKeys = new Set<string>();
+let dismissedBannerKeys = new Set<string>();
 
 async function getSettings(): Promise<UserSettings> {
   if (!cachedSettings) {
@@ -74,6 +76,12 @@ function extractLinks(bodyEl: Element): EmailLink[] {
   return links;
 }
 
+/** Gmail's own message id for the rendered message, when present in the DOM. */
+function extractMessageId(bodyEl: Element | null): string | null {
+  const container = bodyEl?.closest(GMAIL_SELECTORS.messageContainer);
+  return container?.getAttribute("data-message-id") ?? null;
+}
+
 function extractEmailData(): EmailData | null {
   const main = document.querySelector(GMAIL_SELECTORS.main);
   if (!main) return null;
@@ -105,18 +113,53 @@ function extractEmailData(): EmailData | null {
     bodyText,
     links,
     extractedAt: Date.now(),
+    messageId: extractMessageId(bodyEl),
   };
 }
 
+/** Prefer Gmail's real message id (stable across re-renders of the same
+ * message) and fall back to the previous content-derived heuristic key when
+ * Gmail's DOM doesn't expose one — e.g. if selectors drift. This keeps
+ * banner-dismiss state and analysis dedup working even when the thread view
+ * re-renders the same message, which the heuristic key could miss or collide
+ * on for near-identical subjects/bodies. */
 function buildEmailKey(email: EmailData): string {
+  if (email.messageId) return `msg:${email.messageId}`;
   return `${email.senderEmail}|${email.subject}|${email.bodyText.slice(0, 120)}`;
+}
+
+async function checkUrlIntel(email: EmailData, settings: UserSettings): Promise<UrlIntelMatch[]> {
+  if (!settings.enableUrlIntel || !settings.safeBrowsingApiKey) return [];
+
+  const urls = selectUrlsForIntelCheck(email.links);
+  if (urls.length === 0) return [];
+
+  try {
+    const response = (await chrome.runtime.sendMessage({
+      type: MESSAGE_TYPES.CHECK_URLS,
+      urls,
+      apiKey: settings.safeBrowsingApiKey,
+    })) as CheckUrlsResponse | undefined;
+    return response?.matches ?? [];
+  } catch {
+    // Background worker unreachable, or the safebrowsing.googleapis.com
+    // permission hasn't been granted yet — fail open to the local-only result.
+    return [];
+  }
+}
+
+async function buildAnalysis(email: EmailData, settings: UserSettings): Promise<AnalysisResult> {
+  const localResult = analyzeEmail(email, {
+    disabledRuleIds: settings.disabledRuleIds,
+  });
+
+  const matches = await checkUrlIntel(email, settings);
+  return matches.length > 0 ? augmentResultWithUrlIntel(localResult, matches) : localResult;
 }
 
 async function notifyAnalysis(emailKey: string, email: EmailData): Promise<void> {
   const settings = await getSettings();
-  const result = analyzeEmail(email, {
-    disabledRuleIds: settings.disabledRuleIds,
-  });
+  const result = await buildAnalysis(email, settings);
 
   updateWarningBanner(emailKey, result, settings, dismissedBannerKeys);
 
@@ -146,7 +189,9 @@ async function scanCurrentEmail(force = false): Promise<void> {
   await notifyAnalysis(emailKey, email);
 }
 
-function setupObserver(): void {
+async function setupObserver(): Promise<void> {
+  dismissedBannerKeys = await loadDismissedBannerKeys();
+
   const target = document.body;
   const observer = new MutationObserver(() => {
     void scanCurrentEmail();
@@ -161,11 +206,13 @@ function setupObserver(): void {
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== "local" || !changes.userSettings) return;
+  if (area !== "local") return;
 
-  cachedSettings = null;
-  lastEmailKey = null;
-  void scanCurrentEmail(true);
+  if (changes.userSettings) {
+    cachedSettings = null;
+    lastEmailKey = null;
+    void scanCurrentEmail(true);
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -180,9 +227,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     void (async () => {
       const settings = await getSettings();
       const emailKey = message.emailKey ?? buildEmailKey(message.email);
-      const result = analyzeEmail(message.email, {
-        disabledRuleIds: settings.disabledRuleIds,
-      });
+      const result = await buildAnalysis(message.email, settings);
 
       updateWarningBanner(emailKey, result, settings, dismissedBannerKeys);
 
@@ -199,7 +244,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 });
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupObserver);
+  document.addEventListener("DOMContentLoaded", () => void setupObserver());
 } else {
-  setupObserver();
+  void setupObserver();
 }

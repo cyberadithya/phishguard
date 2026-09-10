@@ -46,6 +46,37 @@
         <div id="rules-list" class="rules-list"></div>
       </section>
 
+      <section class="panel">
+        <h2>Threat intelligence (opt-in)</h2>
+        <p class="hint">
+          Off by default. When enabled, PhishGuard sends only the URLs found in the
+          open email &mdash; never the sender, subject, or body text &mdash; to Google
+          Safe Browsing to check against known threat lists.
+        </p>
+
+        <label class="checkbox-row">
+          <input id="enable-url-intel" type="checkbox" />
+          Enable Google Safe Browsing URL checks
+        </label>
+
+        <label for="safe-browsing-key">Safe Browsing API key</label>
+        <input
+          id="safe-browsing-key"
+          type="password"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Paste your own Safe Browsing API key"
+        />
+        <p class="hint">
+          Get a free key from the
+          <a href="https://developers.google.com/safe-browsing/v4/get-started" target="_blank" rel="noopener noreferrer">Safe Browsing docs</a>.
+          Stored only in this browser's local extension storage &mdash; never committed to
+          the repo or sent anywhere except Google's Safe Browsing endpoint.
+        </p>
+
+        <p id="url-intel-status" class="status" aria-live="polite"></p>
+      </section>
+
       <div class="actions">
         <button id="save-btn" type="button">Save settings</button>
         <button id="reset-btn" type="button" class="secondary">Reset defaults</button>

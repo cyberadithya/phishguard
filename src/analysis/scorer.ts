@@ -5,7 +5,7 @@ import { runAllRules } from "./rules.js";
 
 const MAX_SCORE = 100;
 
-function scoreToRiskLevel(score: number): RiskLevel {
+export function scoreToRiskLevel(score: number): RiskLevel {
   if (score >= 75) return "critical";
   if (score >= 50) return "high";
   if (score >= 25) return "medium";

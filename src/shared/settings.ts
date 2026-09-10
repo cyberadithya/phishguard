@@ -5,6 +5,10 @@ export interface UserSettings {
   phishingThreshold: number;
   showInPageBanner: boolean;
   disabledRuleIds: string[];
+  /** Opt-in: check email link URLs against Google Safe Browsing. Off by default. */
+  enableUrlIntel: boolean;
+  /** User-supplied Safe Browsing API key. Stored only in chrome.storage.local. */
+  safeBrowsingApiKey: string;
 }
 
 export interface RuleDefinition {
@@ -70,6 +74,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   phishingThreshold: PHISHING_THRESHOLD,
   showInPageBanner: true,
   disabledRuleIds: [],
+  enableUrlIntel: false,
+  safeBrowsingApiKey: "",
 };
 
 export function normalizeSettings(raw: Partial<UserSettings> | undefined): UserSettings {
@@ -78,10 +84,18 @@ export function normalizeSettings(raw: Partial<UserSettings> | undefined): UserS
     ? raw.disabledRuleIds.filter((id) => RULE_DEFINITIONS.some((rule) => rule.id === id))
     : [];
 
+  const safeBrowsingApiKey =
+    typeof raw?.safeBrowsingApiKey === "string"
+      ? raw.safeBrowsingApiKey.trim()
+      : DEFAULT_SETTINGS.safeBrowsingApiKey;
+
   return {
     phishingThreshold: Math.min(75, Math.max(25, threshold)),
     showInPageBanner: raw?.showInPageBanner ?? DEFAULT_SETTINGS.showInPageBanner,
     disabledRuleIds,
+    // Never enable URL intel with no key configured, regardless of stored value.
+    enableUrlIntel: Boolean(raw?.enableUrlIntel ?? DEFAULT_SETTINGS.enableUrlIntel) && Boolean(safeBrowsingApiKey),
+    safeBrowsingApiKey,
   };
 }
 

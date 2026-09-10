@@ -66,6 +66,24 @@ input[type="range"] {
   margin: 8px 0 12px;
 }
 
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #e2e8f0;
+  font-size: 13px;
+  margin: 4px 0 10px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
 .hint {
   font-size: 13px;
   color: #94a3b8;
@@ -138,4 +156,8 @@ button:hover {
   min-height: 20px;
   font-size: 13px;
   color: #86efac;
+}
+
+.status.warn {
+  color: #fbbf24;
 }

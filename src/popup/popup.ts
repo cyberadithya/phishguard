@@ -56,11 +56,28 @@ function showAnalysis(email: EmailData, result: AnalysisResult): void {
     for (const finding of result.findings) {
       const li = document.createElement("li");
       li.className = `finding-item ${finding.severity}`;
-      li.innerHTML = `
-        <div class="finding-rule">${finding.rule}</div>
-        <div class="finding-message">${finding.message}</div>
-        ${finding.evidence ? `<div class="finding-evidence">${finding.evidence}</div>` : ""}
-      `;
+
+      // Findings can carry evidence copied straight from the email
+      // (a URL, a sender string). Build the list item with textContent
+      // rather than innerHTML so nothing in that text is ever parsed as
+      // markup — see docs/THREAT_MODEL.md §4.6 (E2).
+      const ruleEl = document.createElement("div");
+      ruleEl.className = "finding-rule";
+      ruleEl.textContent = finding.rule;
+
+      const messageEl = document.createElement("div");
+      messageEl.className = "finding-message";
+      messageEl.textContent = finding.message;
+
+      li.append(ruleEl, messageEl);
+
+      if (finding.evidence) {
+        const evidenceEl = document.createElement("div");
+        evidenceEl.className = "finding-evidence";
+        evidenceEl.textContent = finding.evidence;
+        li.append(evidenceEl);
+      }
+
       findingsList.appendChild(li);
     }
   }

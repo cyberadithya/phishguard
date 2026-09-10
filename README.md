@@ -17,7 +17,7 @@ Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_M
 
 ## Features
 
-- **12 heuristic detection rules** — sender mismatch, reply-to divergence, link deception, punycode domains, suspicious TLDs, urgency language, and more
+- **10 heuristic detection rules** — sender mismatch, reply-to divergence, link deception, punycode domains, suspicious TLDs, urgency language, and more
 - **Explainable risk score (0–100)** with per-finding evidence
 - **Actionable guidance** — what to do when a message looks suspicious
 - **Privacy-first** — 100% local analysis, no external API calls in the MVP
@@ -25,6 +25,7 @@ Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_M
 - **In-page warning banner** — high-risk alerts displayed directly in Gmail
 - **IT export report** — copy Markdown or download JSON for security teams
 - **Configurable settings** — adjustable threshold, per-rule toggles, banner on/off
+- **Optional threat intel (opt-in)** — check link URLs against Google Safe Browsing using your own API key; off by default, sends URLs only
 
 ## Screenshots
 
@@ -62,7 +63,8 @@ flowchart LR
 6. Urgency and credential language
 7. Credential-harvesting link paths
 8. Sender/link domain mismatch
-9. Raw IP address links
+9. Wire transfer fraud (BEC) language
+10. Raw IP address links
 
 ## Getting started
 
@@ -157,13 +159,66 @@ Open **Extension options** (right-click the PhishGuard icon → Options) or use 
 - Adjust the phishing alert threshold (25–75)
 - Toggle the in-page Gmail warning banner
 - Enable or disable individual detection rules
+- Turn on optional Google Safe Browsing URL checks and set your own API key (see below)
+
+### Threat intelligence (optional)
+
+PhishGuard can optionally check the URLs found in an open email against
+[Google Safe Browsing](https://developers.google.com/safe-browsing/v4/get-started)'s
+threat lists. This is **off by default**. If you turn it on:
+
+- Only the URLs from the open email are sent — never sender, subject, or body text
+- You supply your own free Safe Browsing API key, stored locally in `chrome.storage.local`
+- The extension requests the `safebrowsing.googleapis.com` host permission only when you enable the feature
+- A confirmed match adds a high-weight finding on top of the local heuristic score
+
+See [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md#7-planned-features--threat-preview) for the threat-model update that came with this feature.
 
 ## Roadmap
 
-- [ ] Outlook Web App support
-- [ ] Optional VirusTotal / Google Safe Browsing URL checks
+### Recently shipped
+
 - [x] User-configurable sensitivity threshold
 - [x] Export analysis report for IT submission
+- [x] STRIDE threat model (`docs/THREAT_MODEL.md`)
+- [x] 40-sample labeled evaluation corpus with precision/recall/F1 reporting
+- [x] MIT `LICENSE` file, and detection-rule copy corrected to match the code (10 rules, not 12)
+- [x] Optional Google Safe Browsing URL checks (opt-in, user-supplied API key,
+      URL-only, runtime-requested `optional_host_permissions` — see
+      [Threat intelligence (optional)](#threat-intelligence-optional) above)
+- [x] Popup findings list rendered with `textContent` instead of `innerHTML`,
+      closing a residual XSS-hygiene gap the threat model had flagged (E2)
+- [x] In-page banner dismissal now persists across refreshes, and is keyed by
+      Gmail's real message id when available instead of a content-derived
+      heuristic key
+
+### Planned
+
+- [ ] **Outlook Web App support** — a second content script targeting
+      `outlook.office.com` / `outlook.live.com`, reusing the existing local
+      rule engine and scorer unchanged. Needs its own DOM selector module
+      (mirroring `gmail-selectors.ts`) since Outlook's markup differs from
+      Gmail's, plus a new, minimal host permission scoped to those origins
+      only. Tracked as a new-DOM/new-permission entry in
+      [docs/THREAT_MODEL.md §7](docs/THREAT_MODEL.md#7-planned-features--threat-preview).
+- [ ] **VirusTotal URL enrichment** — a second opt-in threat-intel source
+      alongside Safe Browsing, following the same pattern (opt-in, URL-only,
+      user-supplied key, runtime-requested permission).
+- [ ] **Evaluation honesty upgrade** — tag corpus samples by difficulty
+      (obvious/subtle), add intentionally-missed subtle spear-phishing
+      samples with documented false negatives, and report recall per tier
+      instead of a single 100% figure. See
+      [docs/EVALUATION.md § Future evaluation work](docs/EVALUATION.md#future-evaluation-work).
+- [ ] Reconcile `enableUrlIntel` against the actual granted
+      `chrome.permissions` state on options-page load, so a setting that
+      says "on" without the permission having been granted doesn't fail
+      silently.
+- [ ] Chrome Web Store listing (optional; guide kept locally, not in this repo)
+- [ ] Demo video and live PNG popup screenshots (SVG mockups are the
+      placeholder for now)
+- [ ] Email authentication signals (SPF/DKIM/DMARC) if Gmail ever exposes
+      them in the DOM
+- [ ] Homograph detection beyond punycode (Unicode confusables)
 
 ## License
 

@@ -89,6 +89,15 @@ Tradeoff: a single high-weight false positive can push a benign email into the p
 
 Reproduce locally with `npm run evaluate`.
 
+## Scope note: optional Safe Browsing check is excluded from these metrics
+
+PhishGuard's optional, opt-in Google Safe Browsing URL check (see
+[docs/THREAT_MODEL.md](THREAT_MODEL.md#7-planned-features--threat-preview)) is not part
+of `evaluateCorpus()` or the numbers below. It depends on a live network call and a
+user-supplied API key, neither of which the fixture corpus can exercise deterministically.
+`tests/url-intel.test.ts` unit-tests its request-shaping and score-augmentation logic in
+isolation instead. The 100% figures here describe the local heuristic rule engine only.
+
 ## Limitations
 
 1. **Synthetic data** — samples are hand-authored to exercise specific rules. Real-world phishing evolves faster than any static corpus.

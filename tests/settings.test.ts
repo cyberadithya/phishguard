@@ -40,6 +40,15 @@ describe("user settings", () => {
     expect(reduced.findings.some((f) => f.id === "sender-mismatch")).toBe(false);
   });
 
+  it("only enables URL intel when an API key is present", () => {
+    const withoutKey = normalizeSettings({ enableUrlIntel: true, safeBrowsingApiKey: "" });
+    expect(withoutKey.enableUrlIntel).toBe(false);
+
+    const withKey = normalizeSettings({ enableUrlIntel: true, safeBrowsingApiKey: "  test-key  " });
+    expect(withKey.enableUrlIntel).toBe(true);
+    expect(withKey.safeBrowsingApiKey).toBe("test-key");
+  });
+
   it("controls banner visibility from threshold and toggle", () => {
     const settings = normalizeSettings({
       phishingThreshold: 50,

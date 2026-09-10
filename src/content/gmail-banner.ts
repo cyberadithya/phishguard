@@ -3,6 +3,23 @@ import type { UserSettings } from "../shared/settings.js";
 import { shouldShowBanner } from "../shared/settings.js";
 
 const BANNER_HOST_ID = "phishguard-banner-host";
+const DISMISSED_BANNERS_STORAGE_KEY = "dismissedBannerKeys";
+const MAX_DISMISSED_KEYS = 200;
+
+/** Loads previously dismissed banner keys so a dismissal survives a page
+ * refresh or Gmail re-navigation, not just the current content-script
+ * lifetime. */
+export async function loadDismissedBannerKeys(): Promise<Set<string>> {
+  const stored = await chrome.storage.local.get(DISMISSED_BANNERS_STORAGE_KEY);
+  const keys = stored[DISMISSED_BANNERS_STORAGE_KEY];
+  return new Set(Array.isArray(keys) ? keys : []);
+}
+
+async function persistDismissedBannerKeys(keys: Set<string>): Promise<void> {
+  // Cap stored history so this never grows unbounded across a long-lived profile.
+  const trimmed = [...keys].slice(-MAX_DISMISSED_KEYS);
+  await chrome.storage.local.set({ [DISMISSED_BANNERS_STORAGE_KEY]: trimmed });
+}
 
 const BANNER_STYLES = `
   :host {
@@ -150,6 +167,7 @@ export function updateWarningBanner(
   dismissBtn.addEventListener("click", () => {
     dismissedKeys.add(emailKey);
     removeBanner();
+    void persistDismissedBannerKeys(dismissedKeys);
   });
 
   actions.append(dismissBtn);

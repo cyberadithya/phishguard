@@ -5,6 +5,7 @@
   "description": "Analyze Gmail messages for phishing indicators with explainable, local scoring.",
   "permissions": ["storage", "activeTab"],
   "host_permissions": ["https://mail.google.com/*"],
+  "optional_host_permissions": ["https://safebrowsing.googleapis.com/*"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "PhishGuard — Phishing Analyzer",
