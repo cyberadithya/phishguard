@@ -1,0 +1,65 @@
+<!--
+  Synthetic Gmail message DOM — HAND-AUTHORED, never scraped from a real
+  mailbox. It reproduces only the structure that src/content/gmail-selectors.ts
+  actually depends on, with plausible but entirely invented content.
+
+  What each part of this fixture pins:
+
+    div[role="main"]          GMAIL_SELECTORS.main — the extraction root
+    h2.hP                     GMAIL_SELECTORS.subject
+    span.gD[name][email]      GMAIL_SELECTORS.senderName. The attribute and
+                              the rendered text deliberately differ here
+                              ("PayPal Security" vs. "PayPal") so the test
+                              proves the attribute is preferred rather than
+                              passing by coincidence.
+    span.go[email]            GMAIL_SELECTORS.senderEmail (email attr preferred
+                              over the angle-bracketed text content)
+    div[data-message-id]      GMAIL_SELECTORS.messageContainer — resolved by
+                              walking up from the body element
+    div.a3s.aiL               GMAIL_SELECTORS.messageBody
+    span[email] under a
+      parent whose text says
+      "Reply-To:"             extractReplyTo()
+
+  ORDER MATTERS HERE. extractReplyTo() scans every span[email] in document
+  order and returns the first one whose *parent element's* text contains
+  "reply-to". The sender spans are therefore deliberately kept in a sibling
+  block that does not contain that string. If Gmail ever nests the Reply-To row
+  inside the sender block, the sender address would be returned as the
+  reply-to and the reply-to-divergence rule would silently stop firing — see
+  the "known fragility" test in tests/gmail-extract.test.ts, which pins that
+  behaviour so a future fix is a deliberate, visible change.
+-->
+<div role="main">
+  <h2 class="hP">Action required: verify your account within 24 hours</h2>
+
+  <div class="gE iv gt">
+    <div class="gF gK">
+      <span class="gD" name="PayPal Security" email="security@paypa1-alerts.example"
+        >PayPal</span
+      >
+      <span class="go" email="security@paypa1-alerts.example"
+        >&lt;security@paypa1-alerts.example&gt;</span
+      >
+    </div>
+    <div class="hb">
+      <span class="hb-label">Reply-To:</span>
+      <span email="refunds@mail-collect.example">refunds@mail-collect.example</span>
+    </div>
+  </div>
+
+  <div class="adn ads" data-message-id="msg-f:1795240991234567890">
+    <div class="a3s aiL">
+      <p>Dear customer,</p>
+      <p>
+        We detected unusual activity on your account. Verify your details immediately or your
+        account will be suspended.
+      </p>
+      <p><a href="https://paypa1-alerts.example/verify">https://www.paypal.com/verify</a></p>
+      <p><a href="http://203.0.113.45/login">Sign in here</a></p>
+      <p><a href="#inbox-anchor">Skip to inbox</a></p>
+      <p><a href="mailto:support@paypa1-alerts.example">Contact support</a></p>
+      <p>PayPal Security Team</p>
+    </div>
+  </div>
+</div>

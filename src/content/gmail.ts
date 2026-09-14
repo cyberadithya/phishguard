@@ -1,11 +1,10 @@
 import { analyzeEmail } from "../analysis/scorer.js";
 import { augmentResultWithUrlIntel, selectUrlsForIntelCheck } from "../analysis/url-intel.js";
-import type { AnalysisResult, EmailData, EmailLink, UrlIntelMatch } from "../shared/types.js";
+import type { AnalysisResult, EmailData, UrlIntelMatch } from "../shared/types.js";
 import { MESSAGE_TYPES } from "../shared/messaging.js";
 import type { CheckUrlsResponse } from "../shared/messaging.js";
 import { loadSettings, type UserSettings } from "../shared/settings.js";
-import { GMAIL_SELECTORS, queryWithFallbacks } from "./gmail-selectors.js";
-import { parseHostname } from "../analysis/link-parser.js";
+import { buildEmailKey, extractEmailData } from "./gmail-extract.js";
 import {
   clearWarningBanner,
   loadDismissedBannerKeys,
@@ -21,101 +20,6 @@ async function getSettings(): Promise<UserSettings> {
     cachedSettings = await loadSettings();
   }
   return cachedSettings;
-}
-
-function extractSenderInfo(root: ParentNode): {
-  senderName: string;
-  senderEmail: string;
-} {
-  const nameEl = queryWithFallbacks(root, [GMAIL_SELECTORS.senderName, "span[email][name]", ".gD"]);
-  const emailEl = queryWithFallbacks(root, [GMAIL_SELECTORS.senderEmail, "span[email]", ".go"]);
-
-  const senderName = nameEl?.getAttribute("name") ?? nameEl?.textContent?.trim() ?? "";
-  const senderEmail =
-    emailEl?.getAttribute("email") ??
-    emailEl?.textContent?.trim() ??
-    nameEl?.getAttribute("email") ??
-    "";
-
-  return { senderName, senderEmail };
-}
-
-function extractReplyTo(root: ParentNode): string | null {
-  const metaSpans = root.querySelectorAll("span[email]");
-  for (const span of metaSpans) {
-    const label = span.parentElement?.textContent?.toLowerCase() ?? "";
-    if (label.includes("reply-to")) {
-      return span.getAttribute("email") ?? span.textContent?.trim() ?? null;
-    }
-  }
-  return null;
-}
-
-function extractLinks(bodyEl: Element): EmailLink[] {
-  const links: EmailLink[] = [];
-  const anchors = bodyEl.querySelectorAll("a[href]");
-
-  for (const anchor of anchors) {
-    const href = anchor.getAttribute("href") ?? "";
-    if (!href || href.startsWith("#") || href.startsWith("mailto:")) continue;
-
-    links.push({
-      displayText: anchor.textContent?.trim() ?? "",
-      href,
-      hostname: parseHostname(href),
-    });
-  }
-
-  return links;
-}
-
-/** Gmail's own message id for the rendered message, when present in the DOM. */
-function extractMessageId(bodyEl: Element | null): string | null {
-  const container = bodyEl?.closest(GMAIL_SELECTORS.messageContainer);
-  return container?.getAttribute("data-message-id") ?? null;
-}
-
-function extractEmailData(): EmailData | null {
-  const main = document.querySelector(GMAIL_SELECTORS.main);
-  if (!main) return null;
-
-  const subjectEl = queryWithFallbacks(main, [GMAIL_SELECTORS.subject, "h2[data-thread-perm-id]"]);
-  const bodyEl = queryWithFallbacks(main, [
-    GMAIL_SELECTORS.messageBody,
-    "div.ii.gt",
-    'div[dir="ltr"]',
-  ]);
-
-  if (!subjectEl && !bodyEl) return null;
-
-  const { senderName, senderEmail } = extractSenderInfo(main);
-  const subject = subjectEl?.textContent?.trim() ?? "";
-  const bodyText = bodyEl?.textContent?.trim() ?? "";
-  const links = bodyEl ? extractLinks(bodyEl) : [];
-
-  if (!senderEmail && !subject && !bodyText) return null;
-
-  return {
-    senderName,
-    senderEmail,
-    replyTo: extractReplyTo(main),
-    subject,
-    bodyText,
-    links,
-    extractedAt: Date.now(),
-    messageId: extractMessageId(bodyEl),
-  };
-}
-
-/** Prefer Gmail's real message id (stable across re-renders of the same
- * message) and fall back to the previous content-derived heuristic key when
- * Gmail's DOM doesn't expose one — e.g. if selectors drift. This keeps
- * banner-dismiss state and analysis dedup working even when the thread view
- * re-renders the same message, which the heuristic key could miss or collide
- * on for near-identical subjects/bodies. */
-function buildEmailKey(email: EmailData): string {
-  if (email.messageId) return `msg:${email.messageId}`;
-  return `${email.senderEmail}|${email.subject}|${email.bodyText.slice(0, 120)}`;
 }
 
 async function checkUrlIntel(email: EmailData, settings: UserSettings): Promise<UrlIntelMatch[]> {

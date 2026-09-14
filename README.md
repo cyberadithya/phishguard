@@ -104,6 +104,13 @@ npm run evaluate   # print precision/recall on the test corpus
 
 The test suite includes 20 phishing and 20 benign samples in `tests/fixtures/`, including hard benign cases (Amazon payment updates, marketing urgency, university IT notices) to stress-test false positives.
 
+It also includes a Gmail DOM regression test (`tests/gmail-extract.test.ts`) that runs the
+real extraction code against a hand-authored synthetic Gmail message in
+`tests/fixtures/gmail-dom/`. The fixture is written by hand from the selectors in
+`gmail-selectors.ts` — no real mailbox content is ever scraped or committed. It catches
+regressions we introduce; it cannot catch Gmail shipping new markup upstream (see
+[docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) D1).
+
 ### Quality checks
 
 These are the same checks CI runs, in the same order:
@@ -128,7 +135,8 @@ Measured with `npm run test:coverage` (v8 provider), not estimated:
 | Scope                                                                   | Line coverage |
 | ----------------------------------------------------------------------- | ------------- |
 | `src/analysis/**` — rule engine, scorer, link parser, report, URL intel | 97.06%        |
-| Whole `src/` tree                                                       | 53.79%        |
+| `src/content/gmail-extract.ts` — Gmail DOM extraction                   | 97.22%        |
+| Whole `src/` tree                                                       | 59.95%        |
 
 The whole-tree number is deliberately reported as-is rather than massaged. It is low
 because the content script, background service worker, popup and options page only run
@@ -165,13 +173,16 @@ _Synthetic samples are designed for rule validation and regression testing, not 
 ```
 src/
   analysis/       # Rule engine, link parser, scorer, guidance, URL intel
-  content/        # Gmail DOM extraction + in-page banner (content script)
+  content/        # Gmail integration (content script)
+                  #   gmail-extract.ts  pure DOM extraction, unit tested
+                  #   gmail.ts          chrome.* listeners, observer, banner wiring
   background/     # Service worker (badge updates, Safe Browsing fetch)
   options/        # Extension options page
   popup/          # Extension popup UI
   shared/         # Types, messaging, settings and rule definitions
 tests/
   fixtures/       # Labeled phishing and benign email samples
+    gmail-dom/    # Hand-authored synthetic Gmail DOM regression fixture
 scripts/
   build.mjs           # esbuild bundle
   generate-icons.mjs  # icon generation
@@ -242,6 +253,10 @@ See [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md#7-planned-features--threat-previ
 - [x] `npm run check:docs` — fails the build if README's detection-rule list or
       rule count drifts from `RULE_DEFINITIONS`, so the "12 rules vs. 10" mistake
       cannot recur silently
+- [x] Gmail DOM extraction split into a pure, `chrome.*`-free
+      `content/gmail-extract.ts` and pinned by a hand-authored DOM fixture test,
+      turning "did this change break extraction?" into a CI check instead of a
+      manual reload-and-squint
 
 ### Planned
 

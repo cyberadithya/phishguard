@@ -130,12 +130,12 @@ flowchart TB
 
 ### 4.5 Denial of service (degrading availability)
 
-| Threat                                      | Description                                              | Mitigation                                                                                    | Residual risk                                                                  |
-| ------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| **D1 — Gmail DOM changes break extraction** | Google updates UI; selectors fail; no analysis shown.    | Fallback selectors in `gmail-selectors.ts`; empty state in popup when extraction fails.       | Silent failure until selectors updated; user may assume message is safe.       |
-| **D2 — Mutation observer churn**            | Huge DOM mutations slow Gmail tab.                       | Debounce implicit via `lastEmailKey` deduplication; analyze only when email identity changes. | Very large threads may still trigger frequent observer callbacks before dedup. |
-| **D3 — Alert fatigue / banner dismissal**   | User dismisses all banners; ignores real threats.        | Dismiss is per-email session key; settings allow raising threshold; guidance educates.        | Habitual dismissal is a human factors problem, not fully solvable in software. |
-| **D4 — False positives block workflow**     | Legitimate mail always flagged; user disables extension. | Hard benign corpus in tests; adjustable threshold and per-rule toggles.                       | Marketing/transactional mail at threshold boundary may still annoy users.      |
+| Threat                                      | Description                                              | Mitigation                                                                                                                                                                                                                              | Residual risk                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **D1 — Gmail DOM changes break extraction** | Google updates UI; selectors fail; no analysis shown.    | Fallback selectors in `gmail-selectors.ts`; empty state in popup when extraction fails; extraction is isolated in `content/gmail-extract.ts` and pinned by a hand-authored DOM fixture (`tests/gmail-extract.test.ts`) that runs in CI. | Narrowed, not closed. The fixture catches **our** regressions — a refactor or selector edit that breaks extraction now fails CI. It cannot catch **Google's**: if Gmail ships new markup, the fixture and the live DOM drift apart silently and the test keeps passing. Detecting that still requires manual checks against real Gmail. |
+| **D2 — Mutation observer churn**            | Huge DOM mutations slow Gmail tab.                       | Debounce implicit via `lastEmailKey` deduplication; analyze only when email identity changes.                                                                                                                                           | Very large threads may still trigger frequent observer callbacks before dedup.                                                                                                                                                                                                                                                          |
+| **D3 — Alert fatigue / banner dismissal**   | User dismisses all banners; ignores real threats.        | Dismiss is per-email session key; settings allow raising threshold; guidance educates.                                                                                                                                                  | Habitual dismissal is a human factors problem, not fully solvable in software.                                                                                                                                                                                                                                                          |
+| **D4 — False positives block workflow**     | Legitimate mail always flagged; user disables extension. | Hard benign corpus in tests; adjustable threshold and per-rule toggles.                                                                                                                                                                 | Marketing/transactional mail at threshold boundary may still annoy users.                                                                                                                                                                                                                                                               |
 
 ### 4.6 Elevation of privilege (gaining capabilities without authorization)
 
@@ -200,7 +200,9 @@ Accepted residual risks for the MVP:
 1. Heuristic evasion by targeted attackers
 2. No cryptographic signing of analysis exports
 3. Local-only storage without enterprise visibility
-4. Gmail DOM dependency without automated UI regression tests in production Gmail
+4. Gmail DOM dependency: extraction is covered by a synthetic DOM fixture in CI, but there
+   are still no automated regression tests against production Gmail, so upstream markup
+   changes are only detected manually (see D1)
 
 ---
 
@@ -212,6 +214,9 @@ Accepted residual risks for the MVP:
 | False-positive stress         | `benign-011` – `benign-020` fixtures                                                                                                                                     |
 | No unsolicited external calls | Code review; the only `fetch` in `src/` is the opt-in Safe Browsing lookup in `background/service-worker.ts`, gated on `settings.enableUrlIntel` and a user-supplied key |
 | Permission minimization       | `manifest.json` audit                                                                                                                                                    |
+| Gmail DOM extraction          | `tests/gmail-extract.test.ts` against the hand-authored fixture in `tests/fixtures/gmail-dom/`; verified to fail on selector, attribute and nesting drift                |
+| Documentation accuracy        | `npm run check:docs` — fails the build if README's rule list or count drifts from `RULE_DEFINITIONS`                                                                     |
+| Type and style regressions    | `npm run typecheck` (`tsc --noEmit`) and `npm run lint` in CI; neither the test run nor the build type-checks, since both transpile via esbuild                          |
 
 ---
 

@@ -17,15 +17,23 @@ export default defineConfig({
       // vitest; the rule engine under src/analysis/** is what the corpus and
       // unit tests actually exercise, so it is held to a much higher bar.
       thresholds: {
-        lines: 50,
-        statements: 50,
-        functions: 80,
-        branches: 75,
+        lines: 55,
+        statements: 55,
+        functions: 85,
+        branches: 80,
         "src/analysis/**": {
           lines: 90,
           statements: 90,
           functions: 95,
           branches: 80,
+        },
+        // The Gmail DOM extraction was split out of gmail.ts precisely so it
+        // could be covered by the fixture test; hold it to that.
+        "src/content/gmail-extract.ts": {
+          lines: 90,
+          statements: 90,
+          functions: 95,
+          branches: 70,
         },
       },
     },

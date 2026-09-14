@@ -9,3 +9,7 @@ icons/
 DEMO.md
 PRIVATE_ADVICE.md
 docs/CHROME_WEB_STORE.md
+
+# Hand-authored Gmail DOM regression fixture: its exact markup is what the
+# extraction tests assert against, so it is deliberately not reflowed.
+tests/fixtures/gmail-dom/
