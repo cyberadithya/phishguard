@@ -54,9 +54,7 @@ export function isLinkDeceptive(link: EmailLink): boolean {
 
   if (!looksLikeUrl) return false;
 
-  const displayHost = parseHostname(
-    display.startsWith("http") ? display : `https://${display}`
-  );
+  const displayHost = parseHostname(display.startsWith("http") ? display : `https://${display}`);
   const hrefHost = link.hostname;
 
   if (!displayHost || !hrefHost) return false;

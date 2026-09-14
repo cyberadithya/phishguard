@@ -9,7 +9,11 @@ import type { AnalysisResult, EmailLink } from "../src/shared/types.js";
 
 const links: EmailLink[] = [
   { displayText: "verify", href: "https://fake-bank.example/login", hostname: "fake-bank.example" },
-  { displayText: "verify again", href: "https://fake-bank.example/login", hostname: "fake-bank.example" },
+  {
+    displayText: "verify again",
+    href: "https://fake-bank.example/login",
+    hostname: "fake-bank.example",
+  },
   { displayText: "call us", href: "mailto:help@example.com", hostname: "" },
   { displayText: "anchor", href: "#section", hostname: "" },
 ];

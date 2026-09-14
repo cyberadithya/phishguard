@@ -13,11 +13,11 @@ PhishGuard is designed with a **local-first** architecture:
 
 ## Permissions explained
 
-| Permission | Why it's needed |
-|------------|-----------------|
-| `storage` | Cache the latest analysis so the popup can display results |
-| `activeTab` | Communicate with the content script on the current Gmail tab |
-| `https://mail.google.com/*` | Inject the content script to read the open email's DOM |
+| Permission                                         | Why it's needed                                                                                     |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `storage`                                          | Cache the latest analysis so the popup can display results                                          |
+| `activeTab`                                        | Communicate with the content script on the current Gmail tab                                        |
+| `https://mail.google.com/*`                        | Inject the content script to read the open email's DOM                                              |
 | `https://safebrowsing.googleapis.com/*` (optional) | Only requested if you enable Safe Browsing URL checks in Settings; not present on a default install |
 
 PhishGuard does **not** request broad access to all websites or `tabs` permission to read every tab in the background.

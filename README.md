@@ -6,12 +6,12 @@
 
 ## Threat model
 
-| Aspect | Detail |
-|--------|--------|
-| **Threat** | Phishing emails that trick users into clicking malicious links, revealing credentials, or replying to impersonated senders |
-| **User** | College students and general Gmail users reviewing suspicious messages |
-| **Trust boundary** | Email content is read from the Gmail DOM only when the user has the message open |
-| **Out of scope** | Attachment malware analysis, server-side ML, non-Gmail clients (Outlook support planned) |
+| Aspect             | Detail                                                                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| **Threat**         | Phishing emails that trick users into clicking malicious links, revealing credentials, or replying to impersonated senders |
+| **User**           | College students and general Gmail users reviewing suspicious messages                                                     |
+| **Trust boundary** | Email content is read from the Gmail DOM only when the user has the message open                                           |
+| **Out of scope**   | Attachment malware analysis, server-side ML, non-Gmail clients (Outlook support planned)                                   |
 
 Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
@@ -20,7 +20,9 @@ Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_M
 - **10 heuristic detection rules** — sender mismatch, reply-to divergence, link deception, punycode domains, suspicious TLDs, urgency language, and more
 - **Explainable risk score (0–100)** with per-finding evidence
 - **Actionable guidance** — what to do when a message looks suspicious
-- **Privacy-first** — 100% local analysis, no external API calls in the MVP
+- **Privacy-first** — message analysis is 100% local; the only outbound request is the
+  opt-in Safe Browsing URL check described below, which is off by default and never sends
+  sender, subject, or body text
 - **Badge indicator** — risk score shown on the extension icon while viewing Gmail
 - **In-page warning banner** — high-risk alerts displayed directly in Gmail
 - **IT export report** — copy Markdown or download JSON for security teams
@@ -29,8 +31,8 @@ Full STRIDE threat model for the extension: [docs/THREAT_MODEL.md](docs/THREAT_M
 
 ## Screenshots
 
-| Low risk (benign email) | Critical risk (phishing indicators) |
-|-------------------------|---------------------------------------|
+| Low risk (benign email)                              | Critical risk (phishing indicators)                    |
+| ---------------------------------------------------- | ------------------------------------------------------ |
 | ![Low risk analysis](docs/images/popup-low-risk.svg) | ![High risk analysis](docs/images/popup-high-risk.svg) |
 
 To capture live PNG screenshots from the actual popup UI, open [`docs/screenshots.html`](docs/screenshots.html) in Chrome.
@@ -55,22 +57,26 @@ flowchart LR
 
 ### Detection rules
 
-1. Sender mismatch (display name vs. From address)
-2. Reply-To divergence
-3. Link deception (display URL ≠ href)
-4. Punycode / homograph domains
-5. Suspicious TLDs (.xyz, .tk, .click, etc.)
-6. Urgency and credential language
-7. Credential-harvesting link paths
-8. Sender/link domain mismatch
-9. Wire transfer fraud (BEC) language
-10. Raw IP address links
+Each entry below is the rule's exact name in the code (`RULE_DEFINITIONS` in
+`src/shared/settings.ts`). `npm run check:docs` fails the build if this list and the code
+ever drift apart.
+
+1. **Sender Mismatch** — display name references a brand that does not match the From address
+2. **Reply-To Divergence** — Reply-To address differs from the From address
+3. **Link Deception** — a link's display text shows one URL but the href points elsewhere
+4. **Homograph Domain** — punycode domain that may visually impersonate a real site
+5. **Suspicious TLD** — top-level domain commonly abused in phishing (.xyz, .tk, .click, etc.)
+6. **Urgency Language** — pressure or credential-related language
+7. **Credential Harvesting Link** — login or verification path on an untrusted domain
+8. **Sender/Link Domain Mismatch** — links point outside the sender's organization
+9. **Wire Transfer Fraud** — urgent payment request patterns common in BEC scams
+10. **IP Address Link** — link points to a raw IP address instead of a domain
 
 ## Getting started
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20.19+ (the lint toolchain's floor)
 - Google Chrome
 
 ### Install and build
@@ -98,40 +104,78 @@ npm run evaluate   # print precision/recall on the test corpus
 
 The test suite includes 20 phishing and 20 benign samples in `tests/fixtures/`, including hard benign cases (Amazon payment updates, marketing urgency, university IT notices) to stress-test false positives.
 
+### Quality checks
+
+These are the same checks CI runs, in the same order:
+
+```bash
+npm run lint          # ESLint + typescript-eslint over src/, tests/, scripts/
+npm run format:check  # Prettier (use `npm run format` to rewrite in place)
+npm run typecheck     # tsc --noEmit
+npm run check:docs    # README's rule list vs. RULE_DEFINITIONS
+npm run test:coverage # full suite, with coverage thresholds enforced
+npm run build         # esbuild bundle into dist/
+```
+
+Neither `npm test` nor `npm run build` type-checks — Vitest and the build both transpile
+via esbuild, which strips types without checking them — so `npm run typecheck` is what
+actually catches type errors.
+
+### Test coverage
+
+Measured with `npm run test:coverage` (v8 provider), not estimated:
+
+| Scope                                                                   | Line coverage |
+| ----------------------------------------------------------------------- | ------------- |
+| `src/analysis/**` — rule engine, scorer, link parser, report, URL intel | 97.06%        |
+| Whole `src/` tree                                                       | 53.79%        |
+
+The whole-tree number is deliberately reported as-is rather than massaged. It is low
+because the content script, background service worker, popup and options page only run
+inside a Chrome extension context and cannot be imported under Vitest, so they sit at 0%.
+The code that the 40-sample corpus and the unit tests actually exercise — the rule engine
+— is the number worth reading. Both figures are enforced as thresholds in
+`vitest.config.ts` so they can only go up.
+
 ## Evaluation results
 
 On the included labeled test corpus (threshold: score ≥ 50 = phishing):
 
-| Metric | Value |
-|--------|-------|
-| Samples | 40 (20 phishing, 20 benign) |
-| Precision | 100% |
-| Recall | 100% |
-| F1 | 100% |
-| Accuracy | 100% |
+| Metric    | Value                       |
+| --------- | --------------------------- |
+| Samples   | 40 (20 phishing, 20 benign) |
+| Precision | 100%                        |
+| Recall    | 100%                        |
+| F1        | 100%                        |
+| Accuracy  | 100%                        |
 
 **Confusion matrix**
 
-|  | Predicted phishing | Predicted benign |
-|--|-------------------|------------------|
-| Actual phishing | 20 TP | 0 FN |
-| Actual benign | 0 FP | 20 TN |
+|                 | Predicted phishing | Predicted benign |
+| --------------- | ------------------ | ---------------- |
+| Actual phishing | 20 TP              | 0 FN             |
+| Actual benign   | 0 FP               | 20 TN            |
 
 See [docs/EVALUATION.md](docs/EVALUATION.md) for scoring methodology, rule weights, and limitations.
 
-*Synthetic samples are designed for rule validation and regression testing, not real-world production accuracy.*
+_Synthetic samples are designed for rule validation and regression testing, not real-world production accuracy._
 
 ## Project structure
 
 ```
 src/
-  analysis/       # Rule engine, link parser, scorer, guidance
-  content/        # Gmail DOM extraction (content script)
-  background/     # Service worker (badge updates)
+  analysis/       # Rule engine, link parser, scorer, guidance, URL intel
+  content/        # Gmail DOM extraction + in-page banner (content script)
+  background/     # Service worker (badge updates, Safe Browsing fetch)
+  options/        # Extension options page
   popup/          # Extension popup UI
-  shared/         # Types and messaging
+  shared/         # Types, messaging, settings and rule definitions
 tests/
   fixtures/       # Labeled phishing and benign email samples
+scripts/
+  build.mjs           # esbuild bundle
+  generate-icons.mjs  # icon generation
+  check-docs-sync.ts  # fails CI if README drifts from RULE_DEFINITIONS
 ```
 
 ## Limitations
@@ -141,7 +185,8 @@ tests/
 - **False positives** — marketing emails with urgency language may score medium risk
 - **English-focused** — keyword rules target English phishing templates
 - **No attachment scanning** — malicious PDFs/ZIPs are not analyzed
-- **No threat intel APIs** — VirusTotal / Safe Browsing integration is a planned enhancement
+- **Threat intel is opt-in and URL-only** — Safe Browsing checks are off by default and
+  send only link URLs when enabled; VirusTotal is not integrated yet
 
 ## Ethical use
 
@@ -191,6 +236,12 @@ See [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md#7-planned-features--threat-previ
 - [x] In-page banner dismissal now persists across refreshes, and is keyed by
       Gmail's real message id when available instead of a content-derived
       heuristic key
+- [x] Engineering hygiene: ESLint + Prettier, a real `tsc --noEmit` step (nothing
+      type-checked in CI before — both Vitest and the build transpile via esbuild),
+      and v8 coverage reporting with measured, enforced thresholds
+- [x] `npm run check:docs` — fails the build if README's detection-rule list or
+      rule count drifts from `RULE_DEFINITIONS`, so the "12 rules vs. 10" mistake
+      cannot recur silently
 
 ### Planned
 

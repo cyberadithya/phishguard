@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+package-lock.json
+docs/images/
+icons/
+
+# Gitignored, local-only working notes that are not part of the repo.
+DEMO.md
+PRIVATE_ADVICE.md
+docs/CHROME_WEB_STORE.md

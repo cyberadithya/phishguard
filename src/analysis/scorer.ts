@@ -16,10 +16,7 @@ export interface AnalyzeOptions {
   disabledRuleIds?: string[];
 }
 
-export function analyzeEmail(
-  email: EmailData,
-  options: AnalyzeOptions = {}
-): AnalysisResult {
+export function analyzeEmail(email: EmailData, options: AnalyzeOptions = {}): AnalysisResult {
   const disabled = new Set(options.disabledRuleIds ?? []);
   const findings = runAllRules(email).filter((finding) => !disabled.has(finding.id));
   const rawScore = findings.reduce((sum, f) => sum + f.weight, 0);
@@ -98,8 +95,7 @@ export function evaluateCorpus(
   const total = samples.length;
   const precision = tp + fp > 0 ? tp / (tp + fp) : 0;
   const recall = tp + fn > 0 ? tp / (tp + fn) : 0;
-  const f1Score =
-    precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
+  const f1Score = precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
   const accuracy = total > 0 ? (tp + tn) / total : 0;
 
   return {

@@ -102,9 +102,7 @@ function removeBanner(): void {
 
 function findBannerAnchor(): Element | null {
   return (
-    document.querySelector('div[role="main"]') ??
-    document.querySelector(".nH") ??
-    document.body
+    document.querySelector('div[role="main"]') ?? document.querySelector(".nH") ?? document.body
   );
 }
 

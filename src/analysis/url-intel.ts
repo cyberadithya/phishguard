@@ -24,8 +24,7 @@ import { scoreToRiskLevel } from "./scorer.js";
  */
 
 export const SAFE_BROWSING_ORIGIN = "https://safebrowsing.googleapis.com/*";
-export const SAFE_BROWSING_ENDPOINT =
-  "https://safebrowsing.googleapis.com/v4/threatMatches:find";
+export const SAFE_BROWSING_ENDPOINT = "https://safebrowsing.googleapis.com/v4/threatMatches:find";
 
 const MAX_URLS_PER_REQUEST = 50;
 const URL_INTEL_FINDING_ID = "url-intel-match";
@@ -72,8 +71,7 @@ interface RawSafeBrowsingMatch {
 
 /** Parses a Safe Browsing threatMatches:find response body into matches. */
 export function parseSafeBrowsingMatches(responseJson: unknown): UrlIntelMatch[] {
-  const matches = (responseJson as { matches?: RawSafeBrowsingMatch[] } | undefined)
-    ?.matches;
+  const matches = (responseJson as { matches?: RawSafeBrowsingMatch[] } | undefined)?.matches;
   if (!Array.isArray(matches)) return [];
 
   const results: UrlIntelMatch[] = [];

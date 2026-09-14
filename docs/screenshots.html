@@ -1,19 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhishGuard — Screenshot Preview</title>
     <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background: #f1f5f9;
         color: #0f172a;
         padding: 32px;
       }
-      h1 { font-size: 24px; margin-bottom: 8px; }
-      p { color: #475569; margin-bottom: 24px; max-width: 720px; }
+      h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      p {
+        color: #475569;
+        margin-bottom: 24px;
+        max-width: 720px;
+      }
       .grid {
         display: flex;
         flex-wrap: wrap;
@@ -50,18 +61,28 @@
     <h1>PhishGuard Screenshot Preview</h1>
     <p>
       Open this file in Chrome to capture screenshots for the README. Each frame matches the
-      extension popup styling. Save captures as <code>docs/images/popup-low-risk.png</code>
-      and <code>docs/images/popup-high-risk.png</code> to replace the SVG placeholders in the README.
+      extension popup styling. Save captures as <code>docs/images/popup-low-risk.png</code> and
+      <code>docs/images/popup-high-risk.png</code> to replace the SVG placeholders in the README.
     </p>
 
     <div class="grid">
       <div class="card">
         <h2>Low risk — GitHub notification</h2>
-        <iframe src="popup-preview-low.html" width="380" height="520" title="Low risk preview"></iframe>
+        <iframe
+          src="popup-preview-low.html"
+          width="380"
+          height="520"
+          title="Low risk preview"
+        ></iframe>
       </div>
       <div class="card">
         <h2>Critical risk — PayPal spoof</h2>
-        <iframe src="popup-preview-high.html" width="380" height="620" title="High risk preview"></iframe>
+        <iframe
+          src="popup-preview-high.html"
+          width="380"
+          height="620"
+          title="High risk preview"
+        ></iframe>
       </div>
     </div>
   </body>

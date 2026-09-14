@@ -1,24 +1,21 @@
 import type { AnalysisResult, DetectionFinding, RiskLevel } from "../shared/types.js";
 
 const GUIDANCE_BY_RULE: Record<string, string> = {
-  "Sender Mismatch":
-    "Verify the sender through a separate channel before trusting this message.",
+  "Sender Mismatch": "Verify the sender through a separate channel before trusting this message.",
   "Reply-To Divergence":
     "Do not reply directly; contact the organization using their official website or phone number.",
   "Link Deception":
     "Do not click the link. Hover over links to confirm the real destination, or type the URL manually.",
   "Homograph Domain":
     "This link may visually mimic a trusted brand. Avoid clicking and report to your IT/security team.",
-  "Suspicious TLD":
-    "Treat links with uncommon domains as untrusted until verified.",
+  "Suspicious TLD": "Treat links with uncommon domains as untrusted until verified.",
   "Urgency Language":
     "Phishers create false urgency. Slow down and verify the request independently.",
   "Credential Harvesting Link":
     "Never enter credentials on a page reached from an unsolicited email.",
   "Sender/Link Domain Mismatch":
     "Legitimate companies usually link to their own domain. Verify via the official site.",
-  "IP Address Link":
-    "Reputable services rarely use raw IP links. Do not click.",
+  "IP Address Link": "Reputable services rarely use raw IP links. Do not click.",
   "Wire Transfer Fraud":
     "Verify payment requests in person or by phone using a known number. BEC scams often impersonate executives.",
 };
@@ -42,10 +39,7 @@ const RISK_GUIDANCE: Record<RiskLevel, string[]> = {
   ],
 };
 
-export function buildGuidance(
-  riskLevel: RiskLevel,
-  findings: DetectionFinding[]
-): string[] {
+export function buildGuidance(riskLevel: RiskLevel, findings: DetectionFinding[]): string[] {
   const guidance = new Set<string>(RISK_GUIDANCE[riskLevel]);
 
   for (const finding of findings) {

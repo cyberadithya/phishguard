@@ -1,8 +1,4 @@
-import {
-  buildReportFilename,
-  formatReportJson,
-  formatReportMarkdown,
-} from "../analysis/report.js";
+import { buildReportFilename, formatReportJson, formatReportMarkdown } from "../analysis/report.js";
 import { MESSAGE_TYPES } from "../shared/messaging.js";
 import type { AnalysisResult, EmailData } from "../shared/types.js";
 
@@ -152,9 +148,7 @@ copyMarkdownBtn.addEventListener("click", async () => {
   if (!current) return;
 
   try {
-    await navigator.clipboard.writeText(
-      formatReportMarkdown(current.email, current.result)
-    );
+    await navigator.clipboard.writeText(formatReportMarkdown(current.email, current.result));
     setExportStatus("Markdown report copied to clipboard.");
   } catch {
     setExportStatus("Could not copy to clipboard.");

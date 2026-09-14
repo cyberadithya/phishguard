@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,14 +22,7 @@
           Phishing alert threshold:
           <strong id="threshold-value">50</strong>/100
         </label>
-        <input
-          id="threshold-slider"
-          type="range"
-          min="25"
-          max="75"
-          step="5"
-          value="50"
-        />
+        <input id="threshold-slider" type="range" min="25" max="75" step="5" value="50" />
         <p class="hint">
           Messages scoring at or above this value trigger high-risk alerts and the in-page banner.
         </p>
@@ -49,9 +42,9 @@
       <section class="panel">
         <h2>Threat intelligence (opt-in)</h2>
         <p class="hint">
-          Off by default. When enabled, PhishGuard sends only the URLs found in the
-          open email &mdash; never the sender, subject, or body text &mdash; to Google
-          Safe Browsing to check against known threat lists.
+          Off by default. When enabled, PhishGuard sends only the URLs found in the open email
+          &mdash; never the sender, subject, or body text &mdash; to Google Safe Browsing to check
+          against known threat lists.
         </p>
 
         <label class="checkbox-row">
@@ -69,9 +62,13 @@
         />
         <p class="hint">
           Get a free key from the
-          <a href="https://developers.google.com/safe-browsing/v4/get-started" target="_blank" rel="noopener noreferrer">Safe Browsing docs</a>.
-          Stored only in this browser's local extension storage &mdash; never committed to
-          the repo or sent anywhere except Google's Safe Browsing endpoint.
+          <a
+            href="https://developers.google.com/safe-browsing/v4/get-started"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Safe Browsing docs</a
+          >. Stored only in this browser's local extension storage &mdash; never committed to the
+          repo or sent anywhere except Google's Safe Browsing endpoint.
         </p>
 
         <p id="url-intel-status" class="status" aria-live="polite"></p>

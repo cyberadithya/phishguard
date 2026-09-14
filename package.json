@@ -9,12 +9,29 @@
     "watch": "node scripts/build.mjs --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "evaluate": "vitest run tests/evaluate-corpus.test.ts"
+    "test:coverage": "vitest run --coverage",
+    "evaluate": "vitest run tests/evaluate-corpus.test.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "check:docs": "tsx scripts/check-docs-sync.ts"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^3.0.5",
     "esbuild": "^0.25.0",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^3.4.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
     "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

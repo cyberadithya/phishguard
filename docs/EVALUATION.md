@@ -10,11 +10,11 @@ npm run evaluate
 
 ## Corpus composition
 
-| Split | Count | Purpose |
-|-------|-------|---------|
-| Phishing samples | 20 | Brand spoofing, BEC, link deception, punycode, suspicious TLDs, credential paths |
-| Benign samples | 20 | Legitimate services **plus** hard cases that stress-test false positives |
-| **Total** | **40** | Balanced binary classification set |
+| Split            | Count  | Purpose                                                                          |
+| ---------------- | ------ | -------------------------------------------------------------------------------- |
+| Phishing samples | 20     | Brand spoofing, BEC, link deception, punycode, suspicious TLDs, credential paths |
+| Benign samples   | 20     | Legitimate services **plus** hard cases that stress-test false positives         |
+| **Total**        | **40** | Balanced binary classification set                                               |
 
 ### Hard benign cases (false-positive stress tests)
 
@@ -35,11 +35,11 @@ A precision drop on these samples would indicate the rule engine is too aggressi
 Each triggered rule adds a **weight** to the total score. Weights reflect relative severity (e.g., sender brand spoofing and link deception score higher than generic urgency language). The raw sum is capped at **100**.
 
 | Risk level | Score range |
-|------------|-------------|
-| Low | 0–24 |
-| Medium | 25–49 |
-| High | 50–74 |
-| Critical | 75–100 |
+| ---------- | ----------- |
+| Low        | 0–24        |
+| Medium     | 25–49       |
+| High       | 50–74       |
+| Critical   | 75–100      |
 
 ### Classification threshold
 
@@ -61,31 +61,31 @@ Tradeoff: a single high-weight false positive can push a benign email into the p
 
 ## Metrics
 
-| Metric | Definition |
-|--------|------------|
+| Metric        | Definition                                                           |
+| ------------- | -------------------------------------------------------------------- |
 | **Precision** | TP / (TP + FP) — of flagged messages, how many are actually phishing |
-| **Recall** | TP / (TP + FN) — of phishing messages, how many were flagged |
-| **F1** | Harmonic mean of precision and recall |
-| **Accuracy** | (TP + TN) / total |
+| **Recall**    | TP / (TP + FN) — of phishing messages, how many were flagged         |
+| **F1**        | Harmonic mean of precision and recall                                |
+| **Accuracy**  | (TP + TN) / total                                                    |
 
 ### Confusion matrix
 
-|  | Predicted phishing | Predicted benign |
-|--|------------------|------------------|
-| **Actual phishing** | True positive (TP) | False negative (FN) |
-| **Actual benign** | False positive (FP) | True negative (TN) |
+|                     | Predicted phishing  | Predicted benign    |
+| ------------------- | ------------------- | ------------------- |
+| **Actual phishing** | True positive (TP)  | False negative (FN) |
+| **Actual benign**   | False positive (FP) | True negative (TN)  |
 
 ## Current results (40-sample corpus)
 
-| Metric | Value |
-|--------|-------|
-| Threshold | score ≥ 50 |
-| Precision | 100% |
-| Recall | 100% |
-| F1 | 100% |
-| Accuracy | 100% |
-| False positives | 0 |
-| False negatives | 0 |
+| Metric          | Value      |
+| --------------- | ---------- |
+| Threshold       | score ≥ 50 |
+| Precision       | 100%       |
+| Recall          | 100%       |
+| F1              | 100%       |
+| Accuracy        | 100%       |
+| False positives | 0          |
+| False negatives | 0          |
 
 Reproduce locally with `npm run evaluate`.
 

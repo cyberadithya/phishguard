@@ -94,7 +94,9 @@ export function normalizeSettings(raw: Partial<UserSettings> | undefined): UserS
     showInPageBanner: raw?.showInPageBanner ?? DEFAULT_SETTINGS.showInPageBanner,
     disabledRuleIds,
     // Never enable URL intel with no key configured, regardless of stored value.
-    enableUrlIntel: Boolean(raw?.enableUrlIntel ?? DEFAULT_SETTINGS.enableUrlIntel) && Boolean(safeBrowsingApiKey),
+    enableUrlIntel:
+      Boolean(raw?.enableUrlIntel ?? DEFAULT_SETTINGS.enableUrlIntel) &&
+      Boolean(safeBrowsingApiKey),
     safeBrowsingApiKey,
   };
 }
@@ -110,9 +112,6 @@ export async function saveSettings(settings: UserSettings): Promise<void> {
   });
 }
 
-export function shouldShowBanner(
-  score: number,
-  settings: UserSettings
-): boolean {
+export function shouldShowBanner(score: number, settings: UserSettings): boolean {
   return settings.showInPageBanner && score >= settings.phishingThreshold;
 }

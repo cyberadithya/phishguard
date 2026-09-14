@@ -58,8 +58,6 @@ describe("user settings", () => {
 
     expect(shouldShowBanner(72, settings)).toBe(true);
     expect(shouldShowBanner(30, settings)).toBe(false);
-    expect(shouldShowBanner(72, { ...settings, showInPageBanner: false })).toBe(
-      false
-    );
+    expect(shouldShowBanner(72, { ...settings, showInPageBanner: false })).toBe(false);
   });
 });

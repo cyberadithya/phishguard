@@ -6,15 +6,15 @@ This document applies the [STRIDE](https://learn.microsoft.com/en-us/azure/secur
 
 ### In scope
 
-| Component | Description |
-|-----------|-------------|
-| Content script | Reads open Gmail message DOM, injects warning banner |
-| Rule engine | Local heuristic analysis and scoring |
-| Popup UI | Displays findings, guidance, export actions |
-| Options page | Threshold, banner toggle, per-rule settings |
-| Background worker | Extension badge updates; performs the opt-in Safe Browsing URL lookup (only component that makes network requests) |
-| `chrome.storage.local` | Cached analysis, settings, last email metadata |
-| Exported reports | Markdown (clipboard) and JSON (download) |
+| Component              | Description                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Content script         | Reads open Gmail message DOM, injects warning banner                                                               |
+| Rule engine            | Local heuristic analysis and scoring                                                                               |
+| Popup UI               | Displays findings, guidance, export actions                                                                        |
+| Options page           | Threshold, banner toggle, per-rule settings                                                                        |
+| Background worker      | Extension badge updates; performs the opt-in Safe Browsing URL lookup (only component that makes network requests) |
+| `chrome.storage.local` | Cached analysis, settings, last email metadata                                                                     |
+| Exported reports       | Markdown (clipboard) and JSON (download)                                                                           |
 
 ### Out of scope
 
@@ -71,24 +71,24 @@ flowchart TB
 
 ### Trust boundaries
 
-| Boundary | Crosses with | Data exchanged |
-|----------|----------------|--------------|
-| Gmail DOM → Content script | Untrusted email content → extension | Subject, sender, body text, link URLs |
-| Extension → User | Analysis results, exports | Scores, findings, reports |
-| Extension → Local storage | Persistence | Settings, last analysis cache |
-| Extension → Network | **Opt-in only** | Link URLs only, sent to `safebrowsing.googleapis.com`, never sender/subject/body — see §4.4 (I1) |
+| Boundary                   | Crosses with                        | Data exchanged                                                                                   |
+| -------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Gmail DOM → Content script | Untrusted email content → extension | Subject, sender, body text, link URLs                                                            |
+| Extension → User           | Analysis results, exports           | Scores, findings, reports                                                                        |
+| Extension → Local storage  | Persistence                         | Settings, last analysis cache                                                                    |
+| Extension → Network        | **Opt-in only**                     | Link URLs only, sent to `safebrowsing.googleapis.com`, never sender/subject/body — see §4.4 (I1) |
 
 ---
 
 ## 3. Assets
 
-| Asset | Sensitivity | Location |
-|-------|-------------|----------|
-| Open email content | High (PII, credentials in body) | Gmail DOM (transient), `chrome.storage.local` (cached) |
-| Analysis results | Medium | Storage, popup, in-page banner |
-| User settings | Low | `chrome.storage.local` |
-| Exported reports | High if shared | Clipboard, downloaded files |
-| Extension integrity | High | `dist/` bundle, Chrome extension ID |
+| Asset               | Sensitivity                     | Location                                               |
+| ------------------- | ------------------------------- | ------------------------------------------------------ |
+| Open email content  | High (PII, credentials in body) | Gmail DOM (transient), `chrome.storage.local` (cached) |
+| Analysis results    | Medium                          | Storage, popup, in-page banner                         |
+| User settings       | Low                             | `chrome.storage.local`                                 |
+| Exported reports    | High if shared                  | Clipboard, downloaded files                            |
+| Extension integrity | High                            | `dist/` bundle, Chrome extension ID                    |
 
 ---
 
@@ -96,79 +96,79 @@ flowchart TB
 
 ### 4.1 Spoofing (pretending to be something or someone)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **S1 — Malicious email spoofs trusted sender** | Attacker forges display name or From address; user trusts the message. | Rule engine checks sender mismatch, reply-to divergence, link deception, brand/domain alignment. | Sophisticated spear-phishing with compromised legitimate accounts may pass heuristics. |
-| **S2 — Attacker spoofs PhishGuard UI** | Malicious page or script imitates the warning banner or popup to show false "safe" or "danger" states. | Banner uses Shadow DOM with extension-only injection; not callable from page scripts. Popup runs in extension origin. | A separate malicious extension could show conflicting UI; user must verify extension identity. |
-| **S3 — Typosquat / homograph domains in links** | Links visually mimic trusted brands. | Punycode detection, suspicious TLD checks, deceptive href vs. display text. | Novel homographs without punycode, compromised legit domains not detected by heuristics alone. |
+| Threat                                          | Description                                                                                            | Mitigation                                                                                                            | Residual risk                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **S1 — Malicious email spoofs trusted sender**  | Attacker forges display name or From address; user trusts the message.                                 | Rule engine checks sender mismatch, reply-to divergence, link deception, brand/domain alignment.                      | Sophisticated spear-phishing with compromised legitimate accounts may pass heuristics.         |
+| **S2 — Attacker spoofs PhishGuard UI**          | Malicious page or script imitates the warning banner or popup to show false "safe" or "danger" states. | Banner uses Shadow DOM with extension-only injection; not callable from page scripts. Popup runs in extension origin. | A separate malicious extension could show conflicting UI; user must verify extension identity. |
+| **S3 — Typosquat / homograph domains in links** | Links visually mimic trusted brands.                                                                   | Punycode detection, suspicious TLD checks, deceptive href vs. display text.                                           | Novel homographs without punycode, compromised legit domains not detected by heuristics alone. |
 
 ### 4.2 Tampering (modifying data or code)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **T1 — DOM tampering before extraction** | Attacker-controlled email HTML alters what the content script reads (if Gmail sanitization fails). | Rely on Gmail's renderer; extract text/attributes only, do not execute email scripts. | Zero-day in Gmail rendering could expose different content to DOM vs. what user sees. |
-| **T2 — Tampering with `chrome.storage.local`** | Another extension or local malware modifies cached analysis or settings. | Storage is extension-scoped; other extensions cannot read PhishGuard storage without broader Chrome compromise. | Malware on the host with Chrome profile access could alter extension storage. |
-| **T3 — Supply-chain tampering** | Attacker replaces extension package with malicious build. | Install from verified repo or Chrome Web Store; CI builds from source; review `dist/` before loading unpacked. | User loads unreviewed fork; compromised developer machine. |
-| **T4 — Exported report tampering** | User or third party edits JSON/Markdown before forwarding to IT. | Reports are point-in-time exports; recipients should treat as user-provided evidence, not signed attestations. | No cryptographic integrity on exports (by design for simplicity). |
+| Threat                                         | Description                                                                                        | Mitigation                                                                                                      | Residual risk                                                                         |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **T1 — DOM tampering before extraction**       | Attacker-controlled email HTML alters what the content script reads (if Gmail sanitization fails). | Rely on Gmail's renderer; extract text/attributes only, do not execute email scripts.                           | Zero-day in Gmail rendering could expose different content to DOM vs. what user sees. |
+| **T2 — Tampering with `chrome.storage.local`** | Another extension or local malware modifies cached analysis or settings.                           | Storage is extension-scoped; other extensions cannot read PhishGuard storage without broader Chrome compromise. | Malware on the host with Chrome profile access could alter extension storage.         |
+| **T3 — Supply-chain tampering**                | Attacker replaces extension package with malicious build.                                          | Install from verified repo or Chrome Web Store; CI builds from source; review `dist/` before loading unpacked.  | User loads unreviewed fork; compromised developer machine.                            |
+| **T4 — Exported report tampering**             | User or third party edits JSON/Markdown before forwarding to IT.                                   | Reports are point-in-time exports; recipients should treat as user-provided evidence, not signed attestations.  | No cryptographic integrity on exports (by design for simplicity).                     |
 
 ### 4.3 Repudiation (denying an action occurred)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **R1 — User denies seeing a warning** | User clicks malicious link despite banner/popup, claims no alert shown. | Timestamp in `AnalysisResult.analyzedAt`; export includes generation time. | No server-side audit log; local-only tool cannot prove delivery to user in disputes. |
-| **R2 — No central incident record** | Organization cannot correlate PhishGuard alerts across users. | Export workflow lets users share reports with IT; JSON structured for ticketing. | Voluntary export only; no enterprise SIEM integration in MVP. |
+| Threat                                | Description                                                             | Mitigation                                                                       | Residual risk                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **R1 — User denies seeing a warning** | User clicks malicious link despite banner/popup, claims no alert shown. | Timestamp in `AnalysisResult.analyzedAt`; export includes generation time.       | No server-side audit log; local-only tool cannot prove delivery to user in disputes. |
+| **R2 — No central incident record**   | Organization cannot correlate PhishGuard alerts across users.           | Export workflow lets users share reports with IT; JSON structured for ticketing. | Voluntary export only; no enterprise SIEM integration in MVP.                        |
 
 ### 4.4 Information disclosure (exposing data to unauthorized parties)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **I1 — Email content leaked to external servers** | Extension exfiltrates mailbox data. | Local rule engine runs entirely in-browser and never calls out. The optional Google Safe Browsing check is **off by default**, requires the user's own API key, requests the `safebrowsing.googleapis.com` host permission only when enabled (`optional_host_permissions`, requested via `chrome.permissions.request`), and sends **link URLs only** — never sender, subject, or body text. | A user who enables the feature is trusting their chosen URLs and API key to Google; the request itself (URL + timing) is still information disclosed to a third party even though message content is not. VirusTotal integration remains unimplemented. |
-| **I2 — Sensitive data in clipboard/export** | User copies Markdown report containing PII; file saved to shared machine. | Export footer reminds user to redact; IT export is explicit user action. | User may share unredacted reports; clipboard visible to other apps on OS. |
-| **I3 — Cached email in local storage** | `lastEmail` / `lastAnalysis` persist on disk. | Data stays in extension-local storage; cleared on extension uninstall. | Forensic access to Chrome profile retrieves cache; shared computers increase exposure. |
-| **I4 — Over-broad extension permissions** | Extension reads all sites or all tabs. | Manifest requests `storage`, `activeTab`, and `mail.google.com` host permission only. | `activeTab` still allows popup to message the active Gmail tab when user opens extension. |
-| **I5 — Findings reveal internal security posture** | Exported JSON exposes which rules fired, aiding attacker refinement. | Low severity for individual users; enterprise deployments should treat exports as internal. | Targeted attacker learns which heuristics to evade from shared sample reports. |
+| Threat                                             | Description                                                               | Mitigation                                                                                                                                                                                                                                                                                                                                                                                  | Residual risk                                                                                                                                                                                                                                           |
+| -------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **I1 — Email content leaked to external servers**  | Extension exfiltrates mailbox data.                                       | Local rule engine runs entirely in-browser and never calls out. The optional Google Safe Browsing check is **off by default**, requires the user's own API key, requests the `safebrowsing.googleapis.com` host permission only when enabled (`optional_host_permissions`, requested via `chrome.permissions.request`), and sends **link URLs only** — never sender, subject, or body text. | A user who enables the feature is trusting their chosen URLs and API key to Google; the request itself (URL + timing) is still information disclosed to a third party even though message content is not. VirusTotal integration remains unimplemented. |
+| **I2 — Sensitive data in clipboard/export**        | User copies Markdown report containing PII; file saved to shared machine. | Export footer reminds user to redact; IT export is explicit user action.                                                                                                                                                                                                                                                                                                                    | User may share unredacted reports; clipboard visible to other apps on OS.                                                                                                                                                                               |
+| **I3 — Cached email in local storage**             | `lastEmail` / `lastAnalysis` persist on disk.                             | Data stays in extension-local storage; cleared on extension uninstall.                                                                                                                                                                                                                                                                                                                      | Forensic access to Chrome profile retrieves cache; shared computers increase exposure.                                                                                                                                                                  |
+| **I4 — Over-broad extension permissions**          | Extension reads all sites or all tabs.                                    | Manifest requests `storage`, `activeTab`, and `mail.google.com` host permission only.                                                                                                                                                                                                                                                                                                       | `activeTab` still allows popup to message the active Gmail tab when user opens extension.                                                                                                                                                               |
+| **I5 — Findings reveal internal security posture** | Exported JSON exposes which rules fired, aiding attacker refinement.      | Low severity for individual users; enterprise deployments should treat exports as internal.                                                                                                                                                                                                                                                                                                 | Targeted attacker learns which heuristics to evade from shared sample reports.                                                                                                                                                                          |
 
 ### 4.5 Denial of service (degrading availability)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **D1 — Gmail DOM changes break extraction** | Google updates UI; selectors fail; no analysis shown. | Fallback selectors in `gmail-selectors.ts`; empty state in popup when extraction fails. | Silent failure until selectors updated; user may assume message is safe. |
-| **D2 — Mutation observer churn** | Huge DOM mutations slow Gmail tab. | Debounce implicit via `lastEmailKey` deduplication; analyze only when email identity changes. | Very large threads may still trigger frequent observer callbacks before dedup. |
-| **D3 — Alert fatigue / banner dismissal** | User dismisses all banners; ignores real threats. | Dismiss is per-email session key; settings allow raising threshold; guidance educates. | Habitual dismissal is a human factors problem, not fully solvable in software. |
-| **D4 — False positives block workflow** | Legitimate mail always flagged; user disables extension. | Hard benign corpus in tests; adjustable threshold and per-rule toggles. | Marketing/transactional mail at threshold boundary may still annoy users. |
+| Threat                                      | Description                                              | Mitigation                                                                                    | Residual risk                                                                  |
+| ------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **D1 — Gmail DOM changes break extraction** | Google updates UI; selectors fail; no analysis shown.    | Fallback selectors in `gmail-selectors.ts`; empty state in popup when extraction fails.       | Silent failure until selectors updated; user may assume message is safe.       |
+| **D2 — Mutation observer churn**            | Huge DOM mutations slow Gmail tab.                       | Debounce implicit via `lastEmailKey` deduplication; analyze only when email identity changes. | Very large threads may still trigger frequent observer callbacks before dedup. |
+| **D3 — Alert fatigue / banner dismissal**   | User dismisses all banners; ignores real threats.        | Dismiss is per-email session key; settings allow raising threshold; guidance educates.        | Habitual dismissal is a human factors problem, not fully solvable in software. |
+| **D4 — False positives block workflow**     | Legitimate mail always flagged; user disables extension. | Hard benign corpus in tests; adjustable threshold and per-rule toggles.                       | Marketing/transactional mail at threshold boundary may still annoy users.      |
 
 ### 4.6 Elevation of privilege (gaining capabilities without authorization)
 
-| Threat | Description | Mitigation | Residual risk |
-|--------|-------------|------------|---------------|
-| **E1 — Content script escapes to page origin** | Script gains access to Gmail cookies or session. | Content script isolated world; no `eval` of email HTML; MV3 CSP defaults. | Chrome extension vulnerability class; keep dependencies minimal and updated. |
-| **E2 — Malicious email executes in extension context** | Crafted DOM triggers code execution in content script or extension pages. | No `innerHTML` with email content anywhere in extension code; text extraction via `textContent` / attributes. The popup's finding list (which renders rule/message/evidence strings that can contain email-derived substrings, e.g. a URL) is built with `textContent`, not `innerHTML`. | Future UI changes must keep avoiding `innerHTML` for anything derived from email content or network responses (including Safe Browsing matches). |
-| **E3 — User misled into disabling protections** | Social engineering convinces user to lower threshold or disable all rules. | Settings require deliberate opt-in; defaults remain conservative (threshold 50). | User can always set threshold to 75 or disable critical rules. |
-| **E4 — PhishGuard used as harassment tool** | User exports reports to falsely accuse legitimate senders. | Ethical guidelines in SECURITY.md; reports are heuristic, not legal evidence. | Tool misuse is out of scope for technical controls. |
+| Threat                                                 | Description                                                                | Mitigation                                                                                                                                                                                                                                                                               | Residual risk                                                                                                                                    |
+| ------------------------------------------------------ | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **E1 — Content script escapes to page origin**         | Script gains access to Gmail cookies or session.                           | Content script isolated world; no `eval` of email HTML; MV3 CSP defaults.                                                                                                                                                                                                                | Chrome extension vulnerability class; keep dependencies minimal and updated.                                                                     |
+| **E2 — Malicious email executes in extension context** | Crafted DOM triggers code execution in content script or extension pages.  | No `innerHTML` with email content anywhere in extension code; text extraction via `textContent` / attributes. The popup's finding list (which renders rule/message/evidence strings that can contain email-derived substrings, e.g. a URL) is built with `textContent`, not `innerHTML`. | Future UI changes must keep avoiding `innerHTML` for anything derived from email content or network responses (including Safe Browsing matches). |
+| **E3 — User misled into disabling protections**        | Social engineering convinces user to lower threshold or disable all rules. | Settings require deliberate opt-in; defaults remain conservative (threshold 50).                                                                                                                                                                                                         | User can always set threshold to 75 or disable critical rules.                                                                                   |
+| **E4 — PhishGuard used as harassment tool**            | User exports reports to falsely accuse legitimate senders.                 | Ethical guidelines in SECURITY.md; reports are heuristic, not legal evidence.                                                                                                                                                                                                            | Tool misuse is out of scope for technical controls.                                                                                              |
 
 ---
 
 ## 5. Component-specific summary
 
-| Component | Primary STRIDE threats | Key controls |
-|-----------|------------------------|--------------|
-| Content script | S1, T1, I1, E1, E2 | Isolated world, Gmail-only match, no network |
-| Rule engine | S1, S3, D4 | Explainable heuristics, tunable rules |
-| In-page banner | S2, D3 | Shadow DOM, user dismiss, threshold gating |
-| Popup / export | I2, I5, R1 | Explicit export, redaction reminder |
-| Options page | T2, E3 | Normalized settings, local storage only |
-| Background worker | I1 | Badge updates; sole owner of the opt-in Safe Browsing fetch (URL-only, gated on user opt-in + API key) |
+| Component         | Primary STRIDE threats | Key controls                                                                                           |
+| ----------------- | ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| Content script    | S1, T1, I1, E1, E2     | Isolated world, Gmail-only match, no network                                                           |
+| Rule engine       | S1, S3, D4             | Explainable heuristics, tunable rules                                                                  |
+| In-page banner    | S2, D3                 | Shadow DOM, user dismiss, threshold gating                                                             |
+| Popup / export    | I2, I5, R1             | Explicit export, redaction reminder                                                                    |
+| Options page      | T2, E3                 | Normalized settings, local storage only                                                                |
+| Background worker | I1                     | Badge updates; sole owner of the opt-in Safe Browsing fetch (URL-only, gated on user opt-in + API key) |
 
 ---
 
 ## 6. Permission justification (security lens)
 
-| Permission | STRIDE relevance | Justification |
-|------------|------------------|---------------|
-| `storage` | I3, T2 | Cache analysis and settings locally |
-| `activeTab` | I4 | Message active Gmail tab when user opens popup |
-| `https://mail.google.com/*` | I1, E1 | Inject content script only on Gmail |
-| `https://safebrowsing.googleapis.com/*` (optional) | I1 | Requested only when the user enables Safe Browsing URL checks in Settings; can be revoked by disabling the feature (the options page calls `chrome.permissions.remove` on save) |
+| Permission                                         | STRIDE relevance | Justification                                                                                                                                                                   |
+| -------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `storage`                                          | I3, T2           | Cache analysis and settings locally                                                                                                                                             |
+| `activeTab`                                        | I4               | Message active Gmail tab when user opens popup                                                                                                                                  |
+| `https://mail.google.com/*`                        | I1, E1           | Inject content script only on Gmail                                                                                                                                             |
+| `https://safebrowsing.googleapis.com/*` (optional) | I1               | Requested only when the user enables Safe Browsing URL checks in Settings; can be revoked by disabling the feature (the options page calls `chrome.permissions.remove` on save) |
 
 **Not requested (deliberately):** `<all_urls>`, `tabs`, `webRequest`, `clipboardRead` — reduces disclosure and tampering surface. The Safe Browsing origin is requested as an `optional_host_permissions` entry rather than a static one, so a default install carries no extra network-facing permission.
 
@@ -178,11 +178,11 @@ flowchart TB
 
 **Google Safe Browsing is now implemented** (opt-in, URL-only, user-supplied API key — see the updated I1 row in §4.4 and the permission row in §6). VirusTotal integration and the other roadmap items below remain unimplemented; revisit this model again when they land:
 
-| Feature | New threats | Required controls |
-|---------|-------------|-------------------|
-| VirusTotal URL enrichment | I1 (URL sent externally), I5 | Same pattern as Safe Browsing: opt-in only, URL-only submission, API key in storage not in repo |
-| Outlook Web App | T1, D1 (new DOM), I4 (new host permission) | Separate content script, minimal host scope |
-| Enterprise policy | T2, R2 | Optional managed storage, signed config |
+| Feature                   | New threats                                | Required controls                                                                               |
+| ------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| VirusTotal URL enrichment | I1 (URL sent externally), I5               | Same pattern as Safe Browsing: opt-in only, URL-only submission, API key in storage not in repo |
+| Outlook Web App           | T1, D1 (new DOM), I4 (new host permission) | Separate content script, minimal host scope                                                     |
+| Enterprise policy         | T2, R2                                     | Optional managed storage, signed config                                                         |
 
 ---
 
@@ -206,12 +206,12 @@ Accepted residual risks for the MVP:
 
 ## 9. Security testing alignment
 
-| Control | Verification |
-|---------|--------------|
-| Rule coverage | `tests/rules.test.ts`, 40-sample corpus |
-| False-positive stress | `benign-011` – `benign-020` fixtures |
+| Control                       | Verification                                                                                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Rule coverage                 | `tests/rules.test.ts`, 40-sample corpus                                                                                                                                  |
+| False-positive stress         | `benign-011` – `benign-020` fixtures                                                                                                                                     |
 | No unsolicited external calls | Code review; the only `fetch` in `src/` is the opt-in Safe Browsing lookup in `background/service-worker.ts`, gated on `settings.enableUrlIntel` and a user-supplied key |
-| Permission minimization | `manifest.json` audit |
+| Permission minimization       | `manifest.json` audit                                                                                                                                                    |
 
 ---
 
@@ -224,4 +224,4 @@ Accepted residual risks for the MVP:
 
 ---
 
-*Last updated for PhishGuard v1.0.0 (MV3, Gmail-only, local-first analysis with an opt-in Safe Browsing URL check).*
+_Last updated for PhishGuard v1.0.0 (MV3, Gmail-only, local-first analysis with an opt-in Safe Browsing URL check)._

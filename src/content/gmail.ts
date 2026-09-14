@@ -6,7 +6,11 @@ import type { CheckUrlsResponse } from "../shared/messaging.js";
 import { loadSettings, type UserSettings } from "../shared/settings.js";
 import { GMAIL_SELECTORS, queryWithFallbacks } from "./gmail-selectors.js";
 import { parseHostname } from "../analysis/link-parser.js";
-import { clearWarningBanner, loadDismissedBannerKeys, updateWarningBanner } from "./gmail-banner.js";
+import {
+  clearWarningBanner,
+  loadDismissedBannerKeys,
+  updateWarningBanner,
+} from "./gmail-banner.js";
 
 let lastEmailKey: string | null = null;
 let cachedSettings: UserSettings | null = null;
@@ -23,21 +27,10 @@ function extractSenderInfo(root: ParentNode): {
   senderName: string;
   senderEmail: string;
 } {
-  const nameEl = queryWithFallbacks(root, [
-    GMAIL_SELECTORS.senderName,
-    'span[email][name]',
-    ".gD",
-  ]);
-  const emailEl = queryWithFallbacks(root, [
-    GMAIL_SELECTORS.senderEmail,
-    'span[email]',
-    ".go",
-  ]);
+  const nameEl = queryWithFallbacks(root, [GMAIL_SELECTORS.senderName, "span[email][name]", ".gD"]);
+  const emailEl = queryWithFallbacks(root, [GMAIL_SELECTORS.senderEmail, "span[email]", ".go"]);
 
-  const senderName =
-    nameEl?.getAttribute("name") ??
-    nameEl?.textContent?.trim() ??
-    "";
+  const senderName = nameEl?.getAttribute("name") ?? nameEl?.textContent?.trim() ?? "";
   const senderEmail =
     emailEl?.getAttribute("email") ??
     emailEl?.textContent?.trim() ??
@@ -48,7 +41,7 @@ function extractSenderInfo(root: ParentNode): {
 }
 
 function extractReplyTo(root: ParentNode): string | null {
-  const metaSpans = root.querySelectorAll('span[email]');
+  const metaSpans = root.querySelectorAll("span[email]");
   for (const span of metaSpans) {
     const label = span.parentElement?.textContent?.toLowerCase() ?? "";
     if (label.includes("reply-to")) {
@@ -86,10 +79,7 @@ function extractEmailData(): EmailData | null {
   const main = document.querySelector(GMAIL_SELECTORS.main);
   if (!main) return null;
 
-  const subjectEl = queryWithFallbacks(main, [
-    GMAIL_SELECTORS.subject,
-    "h2[data-thread-perm-id]",
-  ]);
+  const subjectEl = queryWithFallbacks(main, [GMAIL_SELECTORS.subject, "h2[data-thread-perm-id]"]);
   const bodyEl = queryWithFallbacks(main, [
     GMAIL_SELECTORS.messageBody,
     "div.ii.gt",

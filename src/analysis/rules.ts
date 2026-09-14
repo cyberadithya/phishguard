@@ -259,11 +259,7 @@ export function checkSenderDomainMismatch(email: EmailData): DetectionFinding | 
 function domainMatchesBrand(domain: string, brand: string): boolean {
   if (!domain) return false;
   const firstLabel = domain.split(".")[0];
-  return (
-    firstLabel === brand ||
-    domain === `${brand}.com` ||
-    domain.endsWith(`.${brand}.com`)
-  );
+  return firstLabel === brand || domain === `${brand}.com` || domain.endsWith(`.${brand}.com`);
 }
 
 function isTrustedDomain(hostname: string): boolean {
@@ -277,9 +273,7 @@ function isTrustedDomain(hostname: string): boolean {
     "linkedin.com",
     "github.com",
   ];
-  return trusted.some(
-    (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
-  );
+  return trusted.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
 export function checkWireFraud(email: EmailData): DetectionFinding | null {

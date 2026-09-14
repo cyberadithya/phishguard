@@ -42,8 +42,7 @@ describe("link-parser", () => {
   });
 
   it("extracts links from HTML", () => {
-    const html =
-      '<a href="https://evil.com">https://paypal.com</a> plain text';
+    const html = '<a href="https://evil.com">https://paypal.com</a> plain text';
     const links = extractLinksFromHtml(html);
     expect(links).toHaveLength(1);
     expect(links[0].href).toBe("https://evil.com");

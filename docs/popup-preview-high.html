@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,13 +28,21 @@
         <ul>
           <li class="finding-item high">
             <div class="finding-rule">Sender Mismatch</div>
-            <div class="finding-message">Sender name references "paypal" but the email domain does not match.</div>
-            <div class="finding-evidence">PayPal Security &lt;security-alert@paypa1-secure.com&gt;</div>
+            <div class="finding-message">
+              Sender name references "paypal" but the email domain does not match.
+            </div>
+            <div class="finding-evidence">
+              PayPal Security &lt;security-alert@paypa1-secure.com&gt;
+            </div>
           </li>
           <li class="finding-item high">
             <div class="finding-rule">Link Deception</div>
-            <div class="finding-message">A link displays one URL but points to a different destination.</div>
-            <div class="finding-evidence">Shows "https://www.paypal.com/verify" → https://paypa1-secure.com/login/verify</div>
+            <div class="finding-message">
+              A link displays one URL but points to a different destination.
+            </div>
+            <div class="finding-evidence">
+              Shows "https://www.paypal.com/verify" → https://paypa1-secure.com/login/verify
+            </div>
           </li>
           <li class="finding-item medium">
             <div class="finding-rule">Urgency Language</div>
@@ -53,7 +61,9 @@
       </section>
     </main>
     <footer>
-      <p>All analysis runs locally in your browser. No email content is sent to external servers.</p>
+      <p>
+        All analysis runs locally in your browser. No email content is sent to external servers.
+      </p>
     </footer>
   </body>
 </html>

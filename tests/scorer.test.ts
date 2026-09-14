@@ -119,9 +119,7 @@ describe("evaluateCorpus", () => {
         extractedAt: Date.now(),
       });
       if (result.score >= 50) {
-        falsePositives.push(
-          `${sample.id} (score ${result.score}): ${sample.description}`
-        );
+        falsePositives.push(`${sample.id} (score ${result.score}): ${sample.description}`);
       }
     }
 
